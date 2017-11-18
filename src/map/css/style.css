@@ -1,0 +1,152 @@
+/*
+    This style sheet stylizes the controls inside our
+    goLogoLo JavaFX application. Note that controls
+    in the UI must have the same class as those below in 
+    order to be rendered using those properties.
+
+    @author Nafiul Azim
+    @author ?
+    @version 1.0
+*/
+
+.color-picker {
+    -fx-padding: 2px;
+}
+
+.edit_toolbar_row {
+    
+    
+    -fx-background-color: #dacebe;
+    -fx-background-radius: 5.0;
+    
+    -fx-spacing: 6;
+    -fx-border-width: 2px;
+    -fx-border-color: #ab353d;
+    -fx-vgap:5;
+    -fx-fill-width:true;
+}
+
+.row_item{
+    -fx-spacing: 50;
+    -fx-background-color: #dacebe;
+    -fx-background-radius: 5.0;
+    -fx-hgap:20;
+    -fx-spacing: 10;
+    -fx-padding: 5 10 9 10;
+    -fx-fill-width:true;
+    -fx-alignment:CENTER_LEFT;
+}
+
+.color_chooser_pane {
+    -fx-background-color:seashell;
+    -fx-padding: 0px;
+}
+
+.color_chooser_control {
+    -fx-background-color:seashell;
+    -fx-font-weight:bold;
+    -fx-font-size:14;
+    -fx-max-width:40;
+    -fx-alignment: center;
+}
+
+.bordered_pane {
+    -fx-background-color: #dacebe;
+    -fx-background-radius: 5.0;
+    -fx-padding: 0;
+    -fx-spacing: 0;
+    -fx-border-width: 2px;
+    -fx-border-color: #ab353d;
+}
+.button{
+    
+    
+}
+
+.small_button{
+    
+    -fx-background-color: 
+        linear-gradient(from 0% 93% to 0% 100%, #a34313 0%, #903b12 100%),
+        #9d4024,
+        #d86e3a,
+        radial-gradient(center 50% 50%, radius 100%, #ea7f4b, #c54e2c);
+    
+    -fx-text-fill:#ccffff;
+    -fx-font-size:14px;
+    
+}
+
+.big_button{
+    
+    -fx-background-color: 
+        linear-gradient(from 0% 93% to 0% 100%, #a34313 0%, #903b12 100%),
+        #9d4024,
+        #d86e3a,
+        radial-gradient(center 50% 50%, radius 100%, #ea7f4b, #c54e2c);
+    -fx-text-fill:#ccffff;
+}
+
+.slider{
+    
+    -fx-align:center;
+}
+
+.max_pane{
+    
+    -fx-background-color:aliceblue;
+}
+
+.top_toolbar{
+    
+    -fx-background-color: #dacebe;
+    -fx-background-radius: 5.0;
+    -fx-padding: 15;
+    -fx-spacing: 0;
+    -fx-max-width: 425;
+    -fx-max-height: 80;
+    -fx-border-width: 2px;
+    -fx-border-color: #7777dd;
+}
+
+
+
+
+.edit_toolbar{
+    
+   
+    -fx-background-color:#19512b;
+}
+
+
+.section_label{
+    
+    -fx-font: bold 16px "Serif";
+}
+
+.combo_box_control{
+    
+    -fx-min-width: 110;
+    -fx-background-color:#f2c58e;
+}
+
+.file_button{
+    
+    -fx-background-color: 
+        linear-gradient(from 0% 93% to 0% 100%, #a34313 0%, #903b12 100%),
+        #9d4024,
+        #d86e3a,
+        radial-gradient(center 50% 50%, radius 100%, #ea7f4b, #c54e2c);
+    -fx-padding: 10 20 10 20;
+    -fx-spacing: 25;
+    -fx-hgap:20;
+   
+    
+}
+
+.welcome{
+    
+    -fx-background-color:#f2c58e;
+    -fx-padding: 20 10 20 10;
+    -fx-font: bold 20px "serif";
+    
+}
