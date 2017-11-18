@@ -52,7 +52,9 @@ public class TrainLine extends Line implements MapElement {
         startX = x;
         startY = y;
         endX = startX;
-        endY = startY + 100;   
+        endY = startY + 100;
+        
+        //
         this.setStartX(startX);
         this.setStartY(startY);
         this.setEndX(endX);
