@@ -6,6 +6,8 @@
 package map.gui;
 
 import djf.AppTemplate;
+import java.util.Optional;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.text.Text;
 import map.data.MapData;
 import static map.data.MapState.remove_shape;
@@ -34,11 +36,11 @@ public class canvasController {
         
         if(data.getState() == starting_line){
         
-            data.startNewLine(x, y, new Text("Test"));
+            data.startNewLine(x, y, new Text(textGetter()));
             data.setState(selecting_shape);
         }else if(data.getState() == starting_station){
         
-            data.startNewStation(x, y, new Text("test"));
+            data.startNewStation(x, y, new Text(textGetter()));
             data.setState(selecting_shape);
         }else if(data.getState() == selecting_shape){
         
@@ -50,5 +52,15 @@ public class canvasController {
             data.setState(selecting_shape);
         }
     }
+    
+    public String textGetter(){
+    
+        TextInputDialog dial = new TextInputDialog("");
+        dial.setTitle("New Text Window");
+        dial.setHeaderText("Please Enter Your Text Below: ");
+        Optional<String> input = dial.showAndWait();
+        return input.get();
+    }
+    
     
 }

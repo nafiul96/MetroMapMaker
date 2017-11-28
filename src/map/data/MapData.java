@@ -199,7 +199,27 @@ public class MapData implements AppDataComponent {
         TrainLine newLine = new TrainLine(txt,false);
         newLine.start(x, y);
         newShape = newLine;
-        initShape();
+        
+        
+         if(selectedShape != null){
+        
+            unhighlightShape(selectedShape);
+            selectedShape = null;
+        }
+        MapWorkspace workspace = (MapWorkspace)app.getWorkspaceComponent();
+        newShape.setFill(workspace.getLineColor().getValue());
+        newShape.setStroke(workspace.getLineColor().getValue());
+        newShape.setStrokeWidth(workspace.getLineThickness().getValue());
+        
+        shapes.add(newShape);
+       // workspace.getStationList().getItems().add();
+        workspace.getLineList().getItems().add(name.getText());
+        workspace.getLineList().getSelectionModel().selectLast();
+        
+        
+        
+        
+       
         shapes.addAll(newLine.startText, newLine.endText);
         newLine.startText.setOnMouseDragged(e->{
         
@@ -241,26 +261,19 @@ public class MapData implements AppDataComponent {
     
     
     
-    private void initShape() {
-        if(selectedShape != null){
+    void lineSetting(){
+    
+        TrainLine temp = (TrainLine)selectedShape;
         
-            unhighlightShape(selectedShape);
-            selectedShape = null;
-        }
-        MapWorkspace workspace = (MapWorkspace)app.getWorkspaceComponent();
-        newShape.setFill(workspace.getLineColor().getValue());
-        newShape.setStroke(workspace.getLineColor().getValue());
-        newShape.setStrokeWidth(workspace.getLineThickness().getValue());
-        
-        shapes.add(newShape);
-       // workspace.getStationList().getItems().add();
-        workspace.getLineList().getItems().add("Map statetion " + shapes.size());
-        workspace.getLineList().getSelectionModel().selectLast();
-       //state = sizing_shape;
-        
+        MapWorkspace work = (MapWorkspace)app.getWorkspaceComponent();
+        temp.strokeWidthProperty().bind(work.getLineThickness().valueProperty());
+        work.getStationList().getSelectionModel().select(temp.name.getText());
     }
 
     private void unhighlightShape(Shape shape) {
+        
+        
+        
         shape.setEffect(null);
     }
     
@@ -270,6 +283,7 @@ public class MapData implements AppDataComponent {
                 
                     selectedShape.setEffect(null);
                     selectedShape = null;
+                    
                 }
                 
         
@@ -281,6 +295,10 @@ public class MapData implements AppDataComponent {
                 
                 this.selectedShape = (Shape)shapes.get(i);
                 selectedShape.setEffect(this.highlighted);
+                if(selectedShape instanceof TrainLine){
+                
+                    lineSetting();
+                }
             }
         }
     }
