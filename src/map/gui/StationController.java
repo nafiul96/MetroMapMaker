@@ -7,6 +7,7 @@ package map.gui;
 
 import djf.AppTemplate;
 import map.data.MapData;
+import map.data.MapState;
 
 /**
  *
@@ -21,6 +22,11 @@ public class StationController {
     public StationController(AppTemplate app) {
         this.app = app;
         data = (MapData)app.getDataComponent();
+    }
+    
+    void processAddStation(){
+    
+        data.setState(MapState.starting_station);
     }
     
     

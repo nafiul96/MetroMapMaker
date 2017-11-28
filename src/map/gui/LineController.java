@@ -50,7 +50,7 @@ public class LineController {
     
     void processRemoveLine(){
     
-        
+        data.setState(MapState.remove_shape);
     }
     
     

@@ -12,7 +12,7 @@ package map.data;
 public enum MapState {
     
     starting_line,
-    starting_Station,
+    starting_station,
     
     selecting_shape,
     dragging_shape,
@@ -30,5 +30,6 @@ public enum MapState {
     STARTING_ELLIPSE,
     SIZING_SHAPE,
     DRAGGING_NOTHING,
-    SIZING_NOTHING
+    SIZING_NOTHING, 
+    remove_shape
 }

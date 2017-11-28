@@ -191,6 +191,10 @@ public class MapWorkspace extends AppWorkspaceComponent {
         //ohWell();
 
     }
+
+    public ComboBox getStationList() {
+        return stationList;
+    }
     
     
     
@@ -341,9 +345,9 @@ public class MapWorkspace extends AppWorkspaceComponent {
         linePane2 = new HBox();
         linePane3 = new HBox();
         
-        lineColor = new ColorPicker(Color.valueOf(BLACK_HEX));
+        lineColor = new ColorPicker(Color.web(BLACK_HEX));
         lineColor.setTooltip(new Tooltip("Choose Line Color"));
-
+        
         addLine = gui.initChildButton(linePane2, ADD_LINE_ICON.toString(), ADD_LINE_TOOLTIP.toString(), false);
         removeLine = gui.initChildButton(linePane2, REMOVE_LINE_ICON.toString(), REMOVE_LINE_TOOLTIP.toString(), false);
         addStation = gui.initChildButton(linePane2, ADD_STATION_ICON.toString(), ADD_STATION_TOOLTIP.toString(), false);
@@ -471,11 +475,21 @@ public class MapWorkspace extends AppWorkspaceComponent {
     private void initController(){
     
         lineControl = new LineController(app);
-        
+        StationController stationControl = new StationController(app);
         
         addLine.setOnAction(e->{
         
             lineControl.processAddLine();
+        });
+        removeLine.setOnAction(e->{
+        
+            lineControl.processRemoveLine();
+        });
+        
+        
+        addStop.setOnAction(e->{
+        
+            stationControl.processAddStation();
         });
         
         canvasControl = new canvasController(app);
@@ -488,6 +502,30 @@ public class MapWorkspace extends AppWorkspaceComponent {
         
         
         
+    }
+
+    public ColorPicker getStationColor() {
+        return stationColor;
+    }
+
+    public void setStationColor(ColorPicker stationColor) {
+        this.stationColor = stationColor;
+    }
+
+    public Slider getStopThickness() {
+        return stopThickness;
+    }
+
+    public void setStopThickness(Slider stopThickness) {
+        this.stopThickness = stopThickness;
+    }
+
+    public ColorPicker getStationFillColor() {
+        return stationFillColor;
+    }
+
+    public void setStationFillColor(ColorPicker stationFillColor) {
+        this.stationFillColor = stationFillColor;
     }
 
     public ComboBox getLineList() {

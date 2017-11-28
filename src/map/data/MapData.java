@@ -15,6 +15,8 @@ import javafx.scene.shape.Shape;
 import map.gui.MapWorkspace;
 import djf.components.AppDataComponent;
 import djf.AppTemplate;
+import javafx.geometry.Point2D;
+import javafx.scene.text.Text;
 import static map.data.MapState.selecting_shape;
 import static map.data.MapState.sizing_shape;
 
@@ -29,6 +31,8 @@ public class MapData implements AppDataComponent {
     
     //Shapes in the map
     ObservableList<Node> shapes;
+    ObservableList<TrainLine> trainlines;
+    ObservableList<Station> stations;
     
     //Background color
     Color backgroundColor;
@@ -188,15 +192,55 @@ public class MapData implements AppDataComponent {
         ((MapWorkspace)app.getWorkspaceComponent()).getCanvas().getChildren().clear();
     }
     
-    public void startNewLine(int x, int y){
+    public void startNewLine(int x, int y, Text name){
     
-        TrainLine newLine = new TrainLine();
+        Text txt = name;
+        
+        TrainLine newLine = new TrainLine(txt,false);
         newLine.start(x, y);
         newShape = newLine;
         initShape();
+        shapes.addAll(newLine.startText, newLine.endText);
+        newLine.startText.setOnMouseDragged(e->{
+        
+            newLine.dragStart(e.getX(), e.getY());
+        });
+        
+        newLine.endText.setOnMouseDragged(e->{
+        
+            newLine.dragEnd(e.getX(), e.getY());
+        });
         
     }
 
+    
+    public void startNewStation(int x, int y, Text name){
+    
+        Station newStation  = new Station(name);
+        newShape = newStation;
+        newStation.start(x, y);
+        
+        
+        MapWorkspace workspace = (MapWorkspace)app.getWorkspaceComponent();
+        newShape.setFill(workspace.getStationFillColor().getValue());
+        newShape.setStroke(workspace.getStationFillColor().getValue());
+       // newStation.setRadius(workspace.getStopThickness().getValue());
+        newStation.setRadiusX(workspace.getStopThickness().getValue());
+        newStation.setRadiusY(workspace.getStopThickness().getValue());
+        
+        newStation.setOnMouseDragged(e->{
+        
+            newStation.drag((int)e.getX(), (int)e.getY());
+        });
+        
+        shapes.add(newShape);
+        shapes.add(newStation.name);
+        workspace.getStationList().getItems().add("Map statetion " + shapes.size());
+        workspace.getStationList().getSelectionModel().selectLast();
+    }
+    
+    
+    
     private void initShape() {
         if(selectedShape != null){
         
@@ -209,8 +253,10 @@ public class MapData implements AppDataComponent {
         newShape.setStrokeWidth(workspace.getLineThickness().getValue());
         
         shapes.add(newShape);
-        
-       state = sizing_shape;
+       // workspace.getStationList().getItems().add();
+        workspace.getLineList().getItems().add("Map statetion " + shapes.size());
+        workspace.getLineList().getSelectionModel().selectLast();
+       //state = sizing_shape;
         
     }
 
@@ -218,9 +264,54 @@ public class MapData implements AppDataComponent {
         shape.setEffect(null);
     }
     
+    public void selectShape(int x, int y){
+    
+        if(selectedShape != null){
+                
+                    selectedShape.setEffect(null);
+                    selectedShape = null;
+                }
+                
+        
+        
+        for(int i=0; i<shapes.size(); i++){
+        
+            if(((Shape)shapes.get(i)).contains(x,y)){
+            
+                
+                this.selectedShape = (Shape)shapes.get(i);
+                selectedShape.setEffect(this.highlighted);
+            }
+        }
+    }
+    
+    
+    
     boolean isCurrentState(MapState state){
     
         return this.state == state;
+    }
+
+    public void removeSelection() {
+        if(selectedShape != null){
+        
+            if(selectedShape instanceof TrainLine){
+            
+                TrainLine temp = (TrainLine)selectedShape; 
+                shapes.remove(temp.startText);
+                shapes.remove(temp.endText);
+            }else if(selectedShape instanceof Station){
+            
+                Station temp = (Station)selectedShape; 
+                shapes.remove(temp.name);
+               
+                
+            }
+            
+            
+            shapes.remove(selectedShape);
+            selectedShape = null;
+        }
     }
     
     
