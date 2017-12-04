@@ -216,7 +216,7 @@ public class MapFiles implements AppFileComponent {
                     double y = addAsDouble(temp,"y");
                     data.startNewStation((int)x, (int)y, new Text(Ename));
                     //Station state = new Station();
-                    myLine.addStop(Ename,x,y);
+                    //myLine.addStop(Ename,x,y);
                 }
             }
         }

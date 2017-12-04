@@ -33,6 +33,9 @@ import static djf.settings.AppStartupConstants.PATH_IMAGES;
 import static djf.ui.AppGUI.CLASS_BORDERED_PANE;
 import static djf.ui.AppGUI.CLASS_FILE_BUTTON;
 import java.awt.Font;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -486,10 +489,29 @@ public class MapWorkspace extends AppWorkspaceComponent {
             lineControl.processRemoveLine();
         });
         
+        this.addStation.setOnAction(e->{
+        
+            lineControl.processAddStationToLine();
+        });
+        
+        this.addStation.setOnAction(e->{
+        
+            lineControl.processAddStationToLine();
+        });
+        
+        
+        
+        
+        
         
         addStop.setOnAction(e->{
         
             stationControl.processAddStation();
+        });
+        
+        removeStop.setOnAction(e->{
+        
+            stationControl.processRemoveStation();
         });
         
         canvasControl = new canvasController(app);
@@ -497,6 +519,16 @@ public class MapWorkspace extends AppWorkspaceComponent {
         canvas.setOnMouseClicked(e->{
         
             canvasControl.processMousePress((int)e.getX(), (int)e.getY());
+        });
+        
+        canvas.setOnMouseDragged(e->{
+        
+            canvasControl.mouseDrag((int)e.getX(), (int)e.getY());
+        });
+        
+        canvas.setOnMouseReleased(e->{
+        
+            canvasControl.mouseRelease((int)e.getX(), (int)e.getY());
         });
         
         

@@ -7,33 +7,29 @@ package map.gui;
 
 import djf.AppTemplate;
 import map.data.MapData;
-import map.data.MapState;
 
 /**
  *
  * @author nafi
  */
-public class StationController {
+public class MapElementController {
     
     AppTemplate app;
-    
     MapData data;
-
-    public StationController(AppTemplate app) {
-        this.app = app;
+    
+    public MapElementController(AppTemplate initApp){
+    
+        app = initApp;
+        
         data = (MapData)app.getDataComponent();
+        
     }
     
-    void processAddStation(){
     
-        data.setState(MapState.starting_station);
+    public void addLine(){
+    
+        
     }
-    
-    void processRemoveStation(){
-    
-        data.setState(MapState.remove_shape);
-    }
-    
     
     
 }

@@ -10,11 +10,16 @@ import java.util.Optional;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.text.Text;
 import map.data.MapData;
+import static map.data.MapState.add_station_mode;
+import static map.data.MapState.deleting_line;
+import static map.data.MapState.dragging_line;
 import static map.data.MapState.remove_shape;
 import static map.data.MapState.selecting_shape;
+import static map.data.MapState.sizing_line;
 import static map.data.MapState.sizing_shape;
 import static map.data.MapState.starting_line;
 import static map.data.MapState.starting_station;
+import map.data.TrainLine;
 
 /**
  *
@@ -36,8 +41,8 @@ public class canvasController {
         
         if(data.getState() == starting_line){
         
-            data.startNewLine(x, y, new Text(textGetter()));
-            data.setState(selecting_shape);
+            data.startNewLine(x, y);
+           // data.setState(sizing_line);
         }else if(data.getState() == starting_station){
         
             data.startNewStation(x, y, new Text(textGetter()));
@@ -50,8 +55,42 @@ public class canvasController {
             data.selectShape(x, y);
             data.removeSelection();
             data.setState(selecting_shape);
+        }else if(data.getState() == deleting_line){
+        
+            data.deleteLine(x,y);
+        }else if(data.getState() == add_station_mode){
+        
+            data.processAddStationToLine(x,y);
         }
     }
+    
+    public void mouseDrag(int x, int y){
+    
+        MapData  data = (MapData)app.getDataComponent();
+        
+        if(data.getState() == sizing_line){
+        
+            TrainLine line = (TrainLine)data.getNewShape();
+            line.size(x, y);
+        }else if(data.getState() == dragging_line){
+            
+            TrainLine line = (TrainLine)data.getNewShape();
+            //line.drag(x, y);
+            
+        }
+    }
+    
+    public void mouseRelease(int x, int y){
+    
+        MapData data = (MapData)app.getDataComponent();
+        
+        if(data.getState() == sizing_line){
+        
+            data.setState(dragging_line);
+        }
+    }
+    
+    
     
     public String textGetter(){
     

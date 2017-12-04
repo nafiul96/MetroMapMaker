@@ -6,13 +6,28 @@ package map.data;
  * are usable or not and what specific user actions should affect.
  * 
  * @author Richard McKenna
- * @author ?
+ * @author NAFIUL AZIM
  * @version 1.0
  */
 public enum MapState {
     
+    
+    
     starting_line,
+    sizing_line,
+    dragging_line,
+    deleting_line,
+    selecting_line,
+    
+    
+    
     starting_station,
+    deleting_station,
+    selecting_station,
+    //sizing_line,
+    
+    
+    
     
     selecting_shape,
     dragging_shape,
