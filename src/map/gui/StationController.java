@@ -8,6 +8,7 @@ package map.gui;
 import djf.AppTemplate;
 import map.data.MapData;
 import map.data.MapState;
+import map.data.Station;
 
 /**
  *
@@ -34,6 +35,35 @@ public class StationController {
         data.setState(MapState.remove_shape);
     }
     
+    void processMoveLabel(){
     
+        MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
+        String name = (String)space.getStationList().getValue();
+        Station temp = data.getStation().get(name);
+        if(temp != null){
+        
+            temp.moveLabel();
+        }
+    }
+    
+    void processRotateLabel(){
+    
+        MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
+        String name = (String)space.getStationList().getValue();
+        Station temp = data.getStation().get(name);
+        
+        if(temp != null){
+        
+            temp.rotateLabel();
+        }
+        
+     
+        
+    }
+    
+    void processSelectStation(){
+    
+        
+    }
     
 }

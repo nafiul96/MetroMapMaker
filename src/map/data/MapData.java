@@ -215,6 +215,7 @@ public class MapData implements AppDataComponent {
         String lineName = (String)workspace.getLineList().getSelectionModel().getSelectedItem();
         TrainLine newLine = new TrainLine(lineName, false);
         this.lines.put(lineName, newLine);
+        newLine.setThicknessslider(workspace.getLineThickness());
         newLine.start(x, y);
         newShape = newLine;
         
@@ -230,7 +231,7 @@ public class MapData implements AppDataComponent {
         
        // newShape.setFill(workspace.getLineColor().getValue());
         newLine.setStroke(workspace.getLineColor().getValue());
-        newLine.setStrokeWidth(workspace.getLineThickness().getValue());
+        //newLine.setStrokeWidth(workspace.getLineThickness().getValue());
         
         state = sizing_line;
     }
@@ -421,7 +422,8 @@ public class MapData implements AppDataComponent {
         
         MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
         space.getLineList().getSelectionModel().select(temp.getName());
-        space.getLineThickness().setValue(temp.getStrokeWidth());
+        //space.getLineThickness().setValue(temp.getStrokeWidth());
+        space.setLineThickness(temp.getThicknessSlider());
         temp.getLabeledLine().setEffect(highlighted);
         
     }
@@ -453,7 +455,7 @@ public class MapData implements AppDataComponent {
         
         if(shapes.contains(node)){
         
-           // unhighlight(selectedShape);
+            unhighlight(selectedShape);
             selectedShape = node;
             selectedShape.setEffect(highlighted);
             MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();

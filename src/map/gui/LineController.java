@@ -20,6 +20,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -89,6 +90,7 @@ public class LineController {
                 workspace.getLineList().getItems().add(txt.getText());
                 workspace.getLineList().getSelectionModel().selectLast();
                 workspace.getLineColor().setValue(picker.getValue());
+                workspace.setStopThickness(new Slider(0,10,1));
                 //Scene appScene = app.getGUI().getPrimaryScene();
                // appScene.setCursor(Cursor.CROSSHAIR);
                 dial.close();
@@ -226,7 +228,8 @@ public class LineController {
     
     void processLineSelection(){
     
-        
+        MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
+        data.selectLine((String)space.getLineList().getValue());
     }
     
     

@@ -42,6 +42,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ScrollPane;
 import static map.css.MapStyle.*;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
@@ -149,7 +150,8 @@ public class MapWorkspace extends AppWorkspaceComponent {
     // THIS IS WHERE WE'LL RENDER OUR DRAWING, NOTE THAT WE
     // CALL THIS A CANVAS, BUT IT'S REALLY JUST A Pane
     Pane canvas;
-
+    ScrollPane canvasScroll;
+    
     Scene temp;
 
     //All Controllers
@@ -462,10 +464,11 @@ public class MapWorkspace extends AppWorkspaceComponent {
         canvas.getChildren().add(debugText);
         debugText.setX(100);
         debugText.setY(100);
-
+        
+       // canvasScroll = new ScrollPane();
         MapData data = (MapData)app.getDataComponent();
         data.setShapes(canvas.getChildren());
-        
+       // canvasScroll.setContent(canvas);
         
         // AND MAKE SURE THE DATA MANAGER IS IN SYNCH WITH THE PANE
         // AND NOW SETUP THE WORKSPACE
@@ -512,7 +515,10 @@ public class MapWorkspace extends AppWorkspaceComponent {
         
             lineControl.processListAllStation();
         });
+        this.lineList.setOnAction(e->{
         
+            lineControl.processLineSelection();
+        });
         
         
         
@@ -526,6 +532,17 @@ public class MapWorkspace extends AppWorkspaceComponent {
         
             stationControl.processRemoveStation();
         });
+        
+        this.moveLabel.setOnAction(e->{
+        
+            stationControl.processMoveLabel();
+        });
+        this.rotateLabel.setOnAction(e->{
+        
+            stationControl.processRotateLabel();
+        });
+        
+        
         
         canvasControl = new canvasController(app);
         

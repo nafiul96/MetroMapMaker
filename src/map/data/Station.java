@@ -23,7 +23,8 @@ public class Station extends Ellipse implements MapElement {
     double startCenterX;
     double startCenterY;
     Text name;
-
+    double transVect[][];
+    int ind;
     HashMap<String, TrainLine> lines;
 
     public Station(Text name) {
@@ -35,17 +36,39 @@ public class Station extends Ellipse implements MapElement {
         startCenterX = 0.0;
         startCenterY = 0.0;
         this.name = name;
-
-        name.xProperty().bind(this.centerXProperty());
-        name.yProperty().bind(this.centerYProperty());
+        this.transVect = new double[][]{{5,0},{-5,0},{0,5},{0,-5}};
+        ind = 0; 
+        
+       // name.xProperty().bind(this.centerXProperty());
+       // name.yProperty().bind(this.centerYProperty());
+       this.setOnMouseDragged(e->{
+       
+           drag((int)e.getX(), (int)e.getY());
+       });
         lines = new HashMap<>();
 
     }
 
+    public void moveLabel(){
+    
+        ind = ++ind%4;
+        name.xProperty().set(startCenterX+transVect[ind][0]);
+        name.yProperty().set(startCenterY+transVect[ind][1]);
+    }
+    
     public void addLine(String lineName, TrainLine trainline) {
 
         lines.put(lineName, trainline);
 
+    }
+    public void rotateLabel(){
+    
+        if(name.getRotate() == 90){
+        
+            name.setRotate(0);
+            return;
+        }
+        name.setRotate(90);
     }
 
     public Text getName() {
@@ -67,6 +90,8 @@ public class Station extends Ellipse implements MapElement {
         startCenterY = y;
         setCenterX(startCenterX);
         setCenterY(startCenterY);
+        name.xProperty().set(startCenterX+transVect[ind][0]);
+        name.yProperty().set(startCenterY+transVect[ind][1]);
     }
 
     @Override
@@ -78,7 +103,8 @@ public class Station extends Ellipse implements MapElement {
         setCenterX(newX);
         setCenterY(newY);
         
-        
+        this.name.xProperty().set(newX+transVect[ind][0]);
+        this.name.yProperty().set(newY+transVect[ind][1]);
         Iterator it = lines.keySet().iterator();
         
         while(it.hasNext()){
