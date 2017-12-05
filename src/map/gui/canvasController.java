@@ -14,6 +14,7 @@ import static map.data.MapState.add_station_mode;
 import static map.data.MapState.deleting_line;
 import static map.data.MapState.dragging_line;
 import static map.data.MapState.remove_shape;
+import static map.data.MapState.remove_station_mode;
 import static map.data.MapState.selecting_shape;
 import static map.data.MapState.sizing_line;
 import static map.data.MapState.sizing_shape;
@@ -61,6 +62,9 @@ public class canvasController {
         }else if(data.getState() == add_station_mode){
         
             data.processAddStationToLine(x,y);
+        }else if(data.getState() == remove_station_mode){
+        
+            data.processRemoveStationFromLine(x,y);
         }
     }
     

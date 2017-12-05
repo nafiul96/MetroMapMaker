@@ -94,7 +94,7 @@ public class MapWorkspace extends AppWorkspaceComponent {
     HBox linePane3;
     Label lineLabel;
     ComboBox lineList;
-    Button addLine, removeLine, addStation, removeStation, listStation;
+    Button addLine, removeLine, addStation, removeStation, listStation,editLine;
     Slider lineThickness;
 
     //StationPane
@@ -355,11 +355,12 @@ public class MapWorkspace extends AppWorkspaceComponent {
         removeLine = gui.initChildButton(linePane2, REMOVE_LINE_ICON.toString(), REMOVE_LINE_TOOLTIP.toString(), false);
         addStation = gui.initChildButton(linePane2, ADD_STATION_ICON.toString(), ADD_STATION_TOOLTIP.toString(), false);
         removeStation = gui.initChildButton(linePane2, REMOVE_STATION_ICON.toString(), REMOVE_STATION_TOOLTIP.toString(), false);
+        editLine = new Button("Edit\nLine");
         listStation = gui.initChildButton(linePane2, LIST_STATION_ICON.toString(), LIST_STATION_TOOLTIP.toString(), false);
         lineThickness = new Slider(0, 10, 1);
         
 
-        linePane1.getChildren().addAll(lineLabel, lineList, lineColor);
+        linePane1.getChildren().addAll(lineLabel, lineList, editLine);
        // linePane2.getChildren().addAll(addLine, removeLine, addStation, removeStation, listStation);
         linePane3.getChildren().add(lineThickness);
         lineToolPane.getChildren().addAll(linePane1, linePane2, linePane3);
@@ -499,6 +500,18 @@ public class MapWorkspace extends AppWorkspaceComponent {
             lineControl.processAddStationToLine();
         });
         
+        this.editLine.setOnAction(e->{
+        
+            lineControl.processEditLine();
+        });
+        this.removeStation.setOnAction(e->{
+        
+            lineControl.processRemoveStationFromLine();
+        });
+        this.listStation.setOnAction(e->{
+        
+            lineControl.processListAllStation();
+        });
         
         
         
@@ -529,6 +542,20 @@ public class MapWorkspace extends AppWorkspaceComponent {
         canvas.setOnMouseReleased(e->{
         
             canvasControl.mouseRelease((int)e.getX(), (int)e.getY());
+        });
+        
+        
+        
+        //Grid toggle
+        this.grid.setOnAction(e->{
+        
+            if(grid.isSelected()){
+            
+                workspace.getStyleClass().add(GRID_LINE);
+            }else{
+            
+                workspace.getStyleClass().remove(GRID_LINE);
+            }
         });
         
         
@@ -706,7 +733,7 @@ public class MapWorkspace extends AppWorkspaceComponent {
         paneUp.getStyleClass().add(SMALL_BUTTON);
         paneDown.getStyleClass().add(SMALL_BUTTON);
         viewLabel.getStyleClass().add(SEC_LABEL);
-
+        
     }
 
     /**

@@ -34,7 +34,7 @@ public enum MapState {
     sizing_shape,
     
     add_station_mode,
-    
+    remove_station_mode,
     
     
     

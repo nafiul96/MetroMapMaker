@@ -7,19 +7,28 @@ package map.gui;
 
 import djf.AppTemplate;
 import djf.ui.AppMessageDialogSingleton;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import map.data.MapData;
 import map.data.MapState;
+import map.data.TrainLine;
 
 /**
  *
@@ -103,7 +112,64 @@ public class LineController {
     
     
     
+    public void processEditLine(){
     
+        MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
+        lineEditDialog((String)space.getLineList().getValue());
+    }
+    
+    
+    void lineEditDialog(String name){
+    
+    
+        TrainLine line = data.getLines().get(name);
+        AppMessageDialogSingleton dial = AppMessageDialogSingleton.getSingleton();
+        dial.setTitle("Edit Line");
+        VBox box = new VBox();
+        //HBox pane = new HBox();
+        GridPane pane = new GridPane();
+        
+        Label label = new Label("Line Name: ");
+        TextField txt = new TextField();
+        txt.setText(name);
+        
+        
+        
+        MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
+        
+        
+        Label label2 = new Label("Color: ");
+        ColorPicker picker = new ColorPicker();
+        picker.setValue((Color)line.getStroke());
+        Button btn = new Button("Add");
+        
+        btn.setOnAction(e->{
+        
+            if(!txt.getText().isEmpty()){
+            
+                line.setName(txt.getText());
+                line.setStroke(picker.getValue());
+                int k = space.getLineList().getSelectionModel().getSelectedIndex();
+                space.getLineList().getItems().add(k,txt.getText());
+                space.getLineList().getItems().remove(k+1);
+                //Scene appScene = app.getGUI().getPrimaryScene();
+               // appScene.setCursor(Cursor.CROSSHAIR);
+                dial.close();
+            }
+        });
+        
+        pane.addRow(0, label,txt);
+        pane.addRow(3, label2, picker);
+        
+        pane.addRow(5, btn);
+        
+        Scene scene = new Scene(pane,300,300);
+        
+        dial.setScene(scene);
+        
+        dial.showAndWait();
+    
+    }
     
     
     
@@ -124,16 +190,44 @@ public class LineController {
     
     void processRemoveStationFromLine(){
     
-        
+        data.setState(MapState.remove_station_mode);
     }
     
     
     void processListAllStation(){
     
+        MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
+        TrainLine line = data.getLines().get(space.getLineList().getValue());
+        
+        
+        AppMessageDialogSingleton dial = AppMessageDialogSingleton.getSingleton();
+        dial.setTitle("View All Stations");
+        
+        ListView v = new ListView();
+        Set k = line.getStops().keySet();
+        Iterator  it = k.iterator();
+        LinkedList<String> s = new LinkedList();
+        while(it.hasNext()){
+        
+            String t = (String)it.next();
+            if(line.getStops().get(t) != null){
+            
+                s.addLast(t);
+            }
+        }
+        v.getItems().setAll(s);
+        ScrollPane box = new ScrollPane();
+        box.setContent(v);
+        Scene scene = new Scene(box);
+        dial.setScene(scene);
+        dial.showAndWait();
         
     }
     
+    void processLineSelection(){
     
+        
+    }
     
     
 }

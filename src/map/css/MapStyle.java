@@ -26,6 +26,7 @@ public class MapStyle {
     public static final String SEC_LABEL = "section_label";
     public static final String CLASS_FILE_BUTTON = "file_button";
     public static final String WELCOME = "welcome";
+    public static final String GRID_LINE = "grid";
     public static final String EMPTY_TEXT = "";
     
     public static final String COMBO_STYLE = "combo_box_control";

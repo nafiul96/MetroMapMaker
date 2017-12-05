@@ -258,7 +258,7 @@ public class MapData implements AppDataComponent {
         station.put(newStation.name.getText(), newStation);
         shapes.add(newShape);
         shapes.add(newStation.name);
-        workspace.getStationList().getItems().add("Map statetion " + shapes.size());
+        workspace.getStationList().getItems().add(newStation.name.getText());
         workspace.getStationList().getSelectionModel().selectLast();
     }
     
@@ -431,7 +431,15 @@ public class MapData implements AppDataComponent {
         MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
         space.getStationList().getSelectionModel().select(temp.getName());
         space.getStopThickness().setValue(temp.getStrokeWidth());
-        temp.setEffect(highlighted);
+        //temp.setEffect(highlighted);
+    }
+
+    public HashMap<String, TrainLine> getLines() {
+        return lines;
+    }
+
+    public HashMap<String, Station> getStation() {
+        return station;
     }
 
     private void unhighlight(Node node) {
@@ -445,7 +453,7 @@ public class MapData implements AppDataComponent {
         
         if(shapes.contains(node)){
         
-            unhighlight(selectedShape);
+           // unhighlight(selectedShape);
             selectedShape = node;
             selectedShape.setEffect(highlighted);
             MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
@@ -466,6 +474,13 @@ public class MapData implements AppDataComponent {
             line.addStop(state.name.getText(), state);
             state.addLine(line.getName(), line);
         }
+    }
+
+    public void processRemoveStationFromLine(int x, int y) {
+        
+        MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
+        TrainLine line = this.lines.get(space.getLineList().getValue());
+        line.removeStationFromLine(x,y);
     }
     
     

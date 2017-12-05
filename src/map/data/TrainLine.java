@@ -7,6 +7,8 @@ package map.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -180,22 +182,22 @@ public class TrainLine extends Polyline implements MapElement {
 
     @Override
     public void size(int x, int y) {
-        
+       // dragEnd(x,y);
         endX = x;
         endY = y;
         
-        if(point.size() == 4){
+        if(point.size() > 4){
         
             point.remove(point.size()-1);
             point.remove(point.size()-1);
         }
-       //point.remove(point.size()-1);
       // point.remove(point.size()-1);
+     // point.remove(point.size()-1);
        point.add(endX);
        point.add(endY);
        
-       //endText.setX(endX);
-       //endText.setY(endY);
+      // endText.setX(endX);
+      // endText.setY(endY);
        endText.xProperty().set(endX);
         endText.yProperty().set(endY);       
     }
@@ -291,20 +293,53 @@ public class TrainLine extends Polyline implements MapElement {
         
         
         
-        endText.setOnMouseReleased(e->{
+      //  endText.setOnMouseReleased(e->{
         
-            point.add(e.getX());
-            point.add(e.getY());
-        });
+        //    point.add(e.getX());
+        //    point.add(e.getY());
+       // });
         
-        startText.setOnMouseReleased(e->{
+        //startText.setOnMouseReleased(e->{
         
-            point.add(0,e.getY());
-            point.add(0,e.getX());
-        });
+        //    point.add(0,e.getY());
+         //   point.add(0,e.getX());
+       // });
          
         
         
+    }
+
+    void removeStationFromLine(int x, int y) {
+        
+        Set k = this.stops.keySet();
+        Iterator it = k.iterator();
+        Station temp = null;
+        while(it.hasNext()){
+        
+            temp = this.stops.get(it.next());
+            if(temp != null && temp.contains(x, y)){
+            
+                temp.lines.replace(this.name, this, null);
+                this.stops.replace(temp.name.getText(), temp, null);
+                break;
+            }
+        }
+        if(temp !=null){
+        
+            for(int i=0; i< point.size(); i = i+2){
+            
+                if(point.get(i) == temp.getCenterX() && point.get(i+1) == temp.getCenterY()){
+                
+                    point.remove(i);point.remove(i);
+                    return;
+                }
+            }
+        }
+        
+    }
+
+    public HashMap<String, Station> getStops() {
+        return stops;
     }
 
 }
