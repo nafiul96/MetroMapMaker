@@ -215,7 +215,7 @@ public class MapData implements AppDataComponent {
         String lineName = (String)workspace.getLineList().getSelectionModel().getSelectedItem();
         TrainLine newLine = new TrainLine(lineName, false);
         this.lines.put(lineName, newLine);
-        newLine.setThicknessslider(workspace.getLineThickness());
+       // newLine.setThicknessslider(workspace.getLineThickness());
         newLine.start(x, y);
         newShape = newLine;
         
@@ -231,7 +231,7 @@ public class MapData implements AppDataComponent {
         
        // newShape.setFill(workspace.getLineColor().getValue());
         newLine.setStroke(workspace.getLineColor().getValue());
-        //newLine.setStrokeWidth(workspace.getLineThickness().getValue());
+        newLine.setStrokeWidth(workspace.getLineThickness().getValue());
         
         state = sizing_line;
     }
@@ -282,13 +282,13 @@ public class MapData implements AppDataComponent {
                 }
                 
         
-        
+        /*
         for(int i= shapes.size()-1; i>=0; i--){
         
-            if(((Shape)shapes.get(i)).contains(x,y)){
+            if((shapes.get(i)).contains(x,y)){
             
                 
-                this.selectedShape = (Shape)shapes.get(i);
+                this.selectedShape = shapes.get(i);
                 selectedShape.setEffect(this.highlighted);
                 if(selectedShape instanceof TrainLine){
                 
@@ -296,6 +296,7 @@ public class MapData implements AppDataComponent {
                 }
             }
         }
+        */
     }
     
     
@@ -422,8 +423,8 @@ public class MapData implements AppDataComponent {
         
         MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
         space.getLineList().getSelectionModel().select(temp.getName());
-        //space.getLineThickness().setValue(temp.getStrokeWidth());
-        space.setLineThickness(temp.getThicknessSlider());
+        space.getLineThickness().setValue(temp.getStrokeWidth());
+        //space.setLineThickness(temp.getThicknessSlider());
         temp.getLabeledLine().setEffect(highlighted);
         
     }

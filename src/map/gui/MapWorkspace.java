@@ -157,7 +157,8 @@ public class MapWorkspace extends AppWorkspaceComponent {
     //All Controllers
     LineController lineControl;
     canvasController canvasControl;
-    
+    StationController stationControl;
+    DecorController decorControl;
     
     // HERE ARE THE CONTROLLERS
     // HERE ARE OUR DIALOGS
@@ -480,10 +481,13 @@ public class MapWorkspace extends AppWorkspaceComponent {
     }
     
     private void initController(){
-    
-        lineControl = new LineController(app);
-        StationController stationControl = new StationController(app);
         
+        canvasControl = new canvasController(app);
+        lineControl = new LineController(app);
+        stationControl = new StationController(app);
+        decorControl = new DecorController(app);
+        
+        //Listeners for Line toolbar
         addLine.setOnAction(e->{
         
             lineControl.processAddLine();
@@ -519,10 +523,15 @@ public class MapWorkspace extends AppWorkspaceComponent {
         
             lineControl.processLineSelection();
         });
+        this.lineThickness.valueProperty().addListener(new ChangeListener(){
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                 lineControl.processStrokeChangeRequest();
+            }
+        });
         
         
-        
-        
+        //Listeners for Station Toolbar
         addStop.setOnAction(e->{
         
             stationControl.processAddStation();
@@ -541,10 +550,25 @@ public class MapWorkspace extends AppWorkspaceComponent {
         
             stationControl.processRotateLabel();
         });
+        this.stationFillColor.valueProperty().addListener(new ChangeListener(){
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                stationControl.processChangeFillColor();
+            }
+          
+        });
+        
+        this.stopThickness.valueProperty().addListener(new ChangeListener(){
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                stationControl.processChangeRadius();
+            }
+        });
         
         
         
-        canvasControl = new canvasController(app);
+        
+        
         
         canvas.setOnMouseClicked(e->{
         
@@ -560,6 +584,30 @@ public class MapWorkspace extends AppWorkspaceComponent {
         
             canvasControl.mouseRelease((int)e.getX(), (int)e.getY());
         });
+        
+        
+        //Decor toolbar listeners
+        
+        this.backgroundColor.valueProperty().addListener(new ChangeListener(){
+         @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                decorControl.processChangeBackgroundFill();
+            }
+        });
+        this.imageBack.setOnAction(e->{
+        
+            decorControl.processImageBackground();
+        });
+        this.addImage.setOnAction(e->{
+        
+            decorControl.processAddImageOverLay();
+        });
+        this.addLabel.setOnAction(e->{
+        
+            decorControl.processAddLabelNote();
+        });
+        
+        
         
         
         

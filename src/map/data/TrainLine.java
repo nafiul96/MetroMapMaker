@@ -36,7 +36,7 @@ public class TrainLine extends Polyline implements MapElement {
     double startX, startY, endX, endY;
     HashMap<String, Station> stops;
     ArrayList<String> station;
-    Slider thicknessSlider;
+    
     public TrainLine(String myName, boolean isCircular) {
 
         //LabelelingInformation
@@ -53,8 +53,8 @@ public class TrainLine extends Polyline implements MapElement {
         stops = new HashMap<>();
         station = new ArrayList<>();
         initTextControl();
-        thicknessSlider = new Slider(0,10,1);
-        this.strokeWidthProperty().bind(thicknessSlider.valueProperty());
+        
+       
 
     }
 
@@ -345,15 +345,9 @@ public class TrainLine extends Polyline implements MapElement {
         return stops;
     }
 
-    Slider getThicknessSlider() {
-        return this.thicknessSlider;
-    }
     
-    void setThicknessslider(Slider slide){
     
-        this.thicknessSlider = slide;
-        this.strokeWidthProperty().bind(thicknessSlider.valueProperty());
-    }
+    
     
 
 }

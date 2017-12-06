@@ -30,6 +30,11 @@ public class StationController {
         data.setState(MapState.starting_station);
     }
     
+    
+    
+    
+    
+    
     void processRemoveStation(){
     
         data.setState(MapState.remove_shape);
@@ -65,5 +70,31 @@ public class StationController {
     
         
     }
+    
+    
+    void processChangeFillColor(){
+    
+        MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
+        String name = (String)space.getStationList().getValue();
+        Station temp = data.getStation().get(name);
+        if(temp != null){
+        
+            temp.setFill(space.getStationFillColor().getValue());
+        }
+    }
+
+    void processChangeRadius() {
+        
+        MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
+        String name = (String)space.getStationList().getValue();
+        Station temp = data.getStation().get(name);
+        if(temp != null){
+        
+            temp.setRadiusX(space.getStopThickness().getValue());
+            temp.setRadiusY(space.getStopThickness().getValue());
+        }
+    }
+    
+    
     
 }

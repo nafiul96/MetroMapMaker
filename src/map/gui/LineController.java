@@ -90,7 +90,7 @@ public class LineController {
                 workspace.getLineList().getItems().add(txt.getText());
                 workspace.getLineList().getSelectionModel().selectLast();
                 workspace.getLineColor().setValue(picker.getValue());
-                workspace.setStopThickness(new Slider(0,10,1));
+                //workspace.setLineThickness(new Slider(0,10,1));
                 //Scene appScene = app.getGUI().getPrimaryScene();
                // appScene.setCursor(Cursor.CROSSHAIR);
                 dial.close();
@@ -230,6 +230,19 @@ public class LineController {
     
         MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
         data.selectLine((String)space.getLineList().getValue());
+    }
+    
+    void processStrokeChangeRequest(){
+    
+        
+        MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
+        String name = (String)space.getLineList().getValue();
+        TrainLine line = data.getLines().get(name);
+        if(line != null){
+        
+            line.setStrokeWidth(space.getLineThickness().getValue());
+        }
+        
     }
     
     
