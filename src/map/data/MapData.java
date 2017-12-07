@@ -21,12 +21,15 @@ import java.util.Set;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.text.Text;
+import jtps.jTPS;
 import static map.data.MapState.deleting_line;
 import static map.data.MapState.deleting_station;
 import static map.data.MapState.dragging_shape;
 import static map.data.MapState.selecting_shape;
 import static map.data.MapState.sizing_line;
 import static map.data.MapState.sizing_shape;
+import map.trans.AddLine_Transaction;
+import map.trans.History;
 
 /**
  * This class serves as the data management component for this application.
@@ -60,6 +63,8 @@ public class MapData implements AppDataComponent {
     MapState state;
     
     AppTemplate app;
+    History hist;
+    
     
     Effect highlighted;
     
@@ -80,7 +85,7 @@ public class MapData implements AppDataComponent {
     public MapData(AppTemplate initApp) {
 	// KEEP THE APP FOR LATER
 	app = initApp;
-
+        hist = History.init();
 	newShape = null;
         selectedShape = null;
         currentFill = Color.web(WHITE_HEX);
@@ -220,7 +225,11 @@ public class MapData implements AppDataComponent {
         newLine.start(x, y);
         newShape = newLine;
         
-        shapes.addAll(newLine.startText,newLine,newLine.endText);
+        //shapes.addAll(newLine.startText,newLine,newLine.endText);
+        jTPS tps = History.getTps();
+        MapData data = (MapData)app.getDataComponent();
+        AddLine_Transaction newTransaction = new AddLine_Transaction(data, newLine);
+        tps.addTransaction(newTransaction);
         
          if(selectedShape != null){
         
@@ -407,6 +416,18 @@ public class MapData implements AppDataComponent {
     }
     
     
+    public void removeLine(String name){
+    
+        TrainLine line = lines.get(name);
+        if(line != null){
+        
+            MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
+            space.getLineList().getItems().remove(name);
+            shapes.removeAll(line.getStartText(),line.getEndText(),line);
+            lines.remove(name);
+        }
+    }
+    
     
     public void removeElement(String element){
     
@@ -520,6 +541,15 @@ public class MapData implements AppDataComponent {
     public boolean isTextSelected() {
         
         return (selectedShape instanceof Text) || (selectedShape instanceof LabelNote) ;
+    }
+
+    public void addStation(Station node) {
+        
+        
+    }
+
+    public void removeStation(Station node) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     

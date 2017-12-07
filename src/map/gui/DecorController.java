@@ -28,11 +28,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javax.imageio.ImageIO;
+import jtps.jTPS;
 import map.data.ImageLay;
 import map.data.LabelNote;
 import map.data.MapData;
 import map.data.MapState;
 import static map.data.MapState.selecting_shape;
+import map.trans.AddNode_Transaction;
+import map.trans.History;
 
 /**
  *
@@ -107,7 +110,11 @@ public class DecorController {
             imageViewToAdd.setImage(imageToAdd);
             imageViewToAdd.xProperty().set(400);
             imageViewToAdd.yProperty().set(400);
-            data.getShapes().add(imageViewToAdd);
+            //data.getShapes().add(imageViewToAdd);
+            MapData d = (MapData)app.getDataComponent();
+            jTPS tps = History.getTps();
+            AddNode_Transaction newTransaction = new AddNode_Transaction(data,imageViewToAdd);
+            tps.addTransaction(newTransaction);
             imageViewToAdd.setOnMouseDragged(e->{
         
             imageViewToAdd.xProperty().set(e.getX());
@@ -137,7 +144,11 @@ public class DecorController {
                     note.yProperty().set(ek.getY());
                     
                 });
-                data.getShapes().add(note);
+               // data.getShapes().add(note);
+               MapData d = (MapData)app.getDataComponent();
+            jTPS tps = History.getTps();
+            AddNode_Transaction newTransaction = new AddNode_Transaction(data,note);
+            tps.addTransaction(newTransaction);
                 dial.close();
             }
         });

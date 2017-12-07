@@ -165,6 +165,7 @@ public class MapWorkspace extends AppWorkspaceComponent {
     StationController stationControl;
     DecorController decorControl;
     FontController fontControl;
+    UndoController trans;
 
     // HERE ARE THE CONTROLLERS
     // HERE ARE OUR DIALOGS
@@ -483,7 +484,7 @@ public class MapWorkspace extends AppWorkspaceComponent {
         stationControl = new StationController(app);
         decorControl = new DecorController(app);
         fontControl = new FontController(app);
-
+        trans = new UndoController(app);
         //Listeners for Line toolbar
         addLine.setOnAction(e -> {
 
@@ -637,6 +638,18 @@ public class MapWorkspace extends AppWorkspaceComponent {
 
                 workspace.getStyleClass().remove(GRID_LINE);
             }
+        });
+        
+        
+        //Undo-Redo listener
+        this.undo.setOnAction(e->{
+        
+            trans.processUndoRequest();
+        });
+        
+        this.redo.setOnAction(e->{
+        
+            trans.processRedoRequest();
         });
 
     }

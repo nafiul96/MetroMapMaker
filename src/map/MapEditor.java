@@ -30,6 +30,7 @@ import static javafx.application.Application.launch;
 import static javafx.application.Application.launch;
 import static javafx.application.Application.launch;
 import static javafx.application.Application.launch;
+import map.trans.History;
 
 /**
  * This class serves as the application class for our goLogoLoApp program. 
