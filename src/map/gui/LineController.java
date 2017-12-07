@@ -236,7 +236,9 @@ public class LineController {
     
         
         MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
+        if(!space.getLineList().getItems().isEmpty()){
         String name = (String)space.getLineList().getValue();
+        
         TrainLine line = data.getLines().get(name);
         if(line != null){
         
@@ -244,6 +246,6 @@ public class LineController {
         }
         
     }
-    
+    }
     
 }

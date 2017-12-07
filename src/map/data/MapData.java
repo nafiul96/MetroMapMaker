@@ -23,6 +23,7 @@ import javafx.scene.Group;
 import javafx.scene.text.Text;
 import static map.data.MapState.deleting_line;
 import static map.data.MapState.deleting_station;
+import static map.data.MapState.dragging_shape;
 import static map.data.MapState.selecting_shape;
 import static map.data.MapState.sizing_line;
 import static map.data.MapState.sizing_shape;
@@ -257,7 +258,7 @@ public class MapData implements AppDataComponent {
         });
         
         station.put(newStation.name.getText(), newStation);
-        shapes.add(newShape);
+        shapes.add(newStation);
         shapes.add(newStation.name);
         workspace.getStationList().getItems().add(newStation.name.getText());
         workspace.getStationList().getSelectionModel().selectLast();
@@ -304,6 +305,16 @@ public class MapData implements AppDataComponent {
     
         Node node = getTopNode(x,y);
         
+        if(node == null){
+        
+            if(selectedShape != null){
+            
+                this.unhighlight(selectedShape);
+                selectedShape = null;
+            }
+            return node;
+        }
+        
         if(node == selectedShape){
         
             return node;
@@ -324,11 +335,13 @@ public class MapData implements AppDataComponent {
         
             Station temp = (Station)node;
             stationSettings(temp);
-        }else{
+        }else if(node instanceof LabelNote){
         
+            LabelNote temp = (LabelNote)node;
             
         }
-        
+        selectedShape = node;
+        node.setEffect(highlighted);
         return node;
     }
     
@@ -336,7 +349,7 @@ public class MapData implements AppDataComponent {
     
         for(int i= shapes.size()-1; i>=0; i--){
         
-            if(((Shape)shapes.get(i)).contains(x,y)){
+            if((shapes.get(i)).contains(x,y)){
             
                 
                 return shapes.get(i);
@@ -362,18 +375,35 @@ public class MapData implements AppDataComponent {
                 TrainLine temp = (TrainLine)selectedShape; 
                 shapes.remove(temp.startText);
                 shapes.remove(temp.endText);
+                // have to remove station from line from line
             }else if(selectedShape instanceof Station){
             
                 Station temp = (Station)selectedShape; 
                 shapes.remove(temp.name);
+               //have to do removeStation from line
                
                 
+            }else{
+                MapElement el = (MapElement)selectedShape;
+                shapes.remove(selectedShape);
+                //selectedShape = null;
             }
             
-            
-            shapes.remove(selectedShape);
-            selectedShape = null;
         }
+    }
+    
+    
+    public void removeElement(int x, int y){
+    
+        Node topGetter = getTopNode(x,y);
+        
+        if(topGetter != null){
+        
+            
+            shapes.remove(topGetter);
+        }
+        
+        state = dragging_shape;
     }
     
     
@@ -406,8 +436,8 @@ public class MapData implements AppDataComponent {
             }
             
         }
-    }
-    
+    } 
+   
     
     
 
@@ -425,15 +455,16 @@ public class MapData implements AppDataComponent {
         space.getLineList().getSelectionModel().select(temp.getName());
         space.getLineThickness().setValue(temp.getStrokeWidth());
         //space.setLineThickness(temp.getThicknessSlider());
-        temp.getLabeledLine().setEffect(highlighted);
+        //temp.getLabeledLine().setEffect(highlighted);
         
     }
 
     private void stationSettings(Station temp) {
         
         MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
-        space.getStationList().getSelectionModel().select(temp.getName());
-        space.getStopThickness().setValue(temp.getStrokeWidth());
+        space.getStationList().getSelectionModel().select(temp.getName().getText());
+        space.getStopThickness().setValue(temp.getRadiusX());
+        space.getStationFillColor().setValue((Color)temp.getFill());
         //temp.setEffect(highlighted);
     }
 
@@ -458,7 +489,7 @@ public class MapData implements AppDataComponent {
         
             unhighlight(selectedShape);
             selectedShape = node;
-            selectedShape.setEffect(highlighted);
+            //selectedShape.setEffect(highlighted);
             MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
             this.lineSettings(lines.get(lineName));
             System.out.println("entered");
@@ -484,6 +515,11 @@ public class MapData implements AppDataComponent {
         MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
         TrainLine line = this.lines.get(space.getLineList().getValue());
         line.removeStationFromLine(x,y);
+    }
+
+    public boolean isTextSelected() {
+        
+        return (selectedShape instanceof Text) || (selectedShape instanceof LabelNote) ;
     }
     
     

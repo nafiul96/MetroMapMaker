@@ -7,6 +7,7 @@ package map.gui;
 
 import djf.AppTemplate;
 import java.util.Optional;
+import javafx.scene.Node;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.text.Text;
 import map.data.MapData;
@@ -50,7 +51,7 @@ public class canvasController {
             data.setState(selecting_shape);
         }else if(data.getState() == selecting_shape){
         
-            data.selectShape(x, y);
+            Node node = data.selectTopNode(x, y);
         }else if(data.getState() == remove_shape){
         
             data.selectShape(x, y);

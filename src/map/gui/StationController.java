@@ -37,7 +37,7 @@ public class StationController {
     
     void processRemoveStation(){
     
-        data.setState(MapState.remove_shape);
+        data.setState(MapState.remove_station);
     }
     
     void processMoveLabel(){
@@ -85,7 +85,9 @@ public class StationController {
 
     void processChangeRadius() {
         
+        
         MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
+        if(!space.getStationList().getItems().isEmpty()){
         String name = (String)space.getStationList().getValue();
         Station temp = data.getStation().get(name);
         if(temp != null){
@@ -93,6 +95,7 @@ public class StationController {
             temp.setRadiusX(space.getStopThickness().getValue());
             temp.setRadiusY(space.getStopThickness().getValue());
         }
+    }
     }
     
     

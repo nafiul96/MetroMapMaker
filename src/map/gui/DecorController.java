@@ -25,11 +25,14 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javax.imageio.ImageIO;
 import map.data.ImageLay;
 import map.data.LabelNote;
 import map.data.MapData;
+import map.data.MapState;
+import static map.data.MapState.selecting_shape;
 
 /**
  *
@@ -107,7 +110,8 @@ public class DecorController {
             data.getShapes().add(imageViewToAdd);
             imageViewToAdd.setOnMouseDragged(e->{
         
-            imageViewToAdd.drag((int)e.getX(), (int)e.getY());
+            imageViewToAdd.xProperty().set(e.getX());
+            imageViewToAdd.yProperty().set(e.getY());
         });
         }
     }
@@ -129,12 +133,11 @@ public class DecorController {
                 note.yProperty().set(400);
                 note.setOnMouseDragged(ek->{
                 
-                    note.drag((int)ek.getX(), (int)ek.getY());
+                    note.xProperty().set(ek.getX());
+                    note.yProperty().set(ek.getY());
                     
                 });
                 data.getShapes().add(note);
-                data.setNewShape(note);
-                data.setSelectedShape(note);
                 dial.close();
             }
         });
@@ -147,6 +150,11 @@ public class DecorController {
         dial.setScene(scene);
         dial.showAndWait();
         
+    }
+
+    void processRemoveElement() {
+        data.removeSelection();
+        data.setState(selecting_shape);
     }
 
 }

@@ -156,6 +156,40 @@
 	<property name="UPDATE_ERROR_TITLE"		    value="UI Update Error"></property>
                 
     </property_list>
-    <property_options_list>
+	
+     <property_options_list>
+        <property_options name="LANGUAGE_OPTIONS">
+            <option>English</option>
+            <option>Korean</option>
+        </property_options>
+        <property_options name="FONT_FAMILY_COMBO_BOX_OPTIONS">
+            <option>Dialog</option>
+            <option>DialogInput</option>
+            <option>Monospaced</option>
+            <option>Sans-serif</option>
+            <option>Serif</option>          
+        </property_options>
+        <property_options name="FONT_SIZE_COMBO_BOX_OPTIONS">
+            <option>8</option>
+            <option>12</option>
+            <option>16</option>
+            <option>20</option>
+            <option>24</option>
+            <option>28</option>
+            <option>32</option>
+            <option>36</option>
+            <option>40</option>
+            <option>44</option>
+            <option>48</option>
+            <option>52</option>
+            <option>56</option>
+            <option>60</option>
+            <option>64</option>
+            <option>68</option>
+            <option>72</option>
+            <option>76</option>
+            <option>80</option>
+            <option>84</option>
+        </property_options>
     </property_options_list>
 </properties>

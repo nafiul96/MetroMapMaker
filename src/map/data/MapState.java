@@ -46,5 +46,7 @@ public enum MapState {
     SIZING_SHAPE,
     DRAGGING_NOTHING,
     SIZING_NOTHING, 
-    remove_shape
+    remove_shape, 
+    
+    remove_station
 }

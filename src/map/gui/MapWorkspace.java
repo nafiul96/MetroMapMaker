@@ -33,9 +33,12 @@ import static djf.settings.AppStartupConstants.PATH_IMAGES;
 import static djf.ui.AppGUI.CLASS_BORDERED_PANE;
 import static djf.ui.AppGUI.CLASS_FILE_BUTTON;
 import java.awt.Font;
+import java.util.ArrayList;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -51,6 +54,8 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import static map.Property.ABOUT_ICON;
 import static map.Property.ABOUT_TOOLTIP;
@@ -95,7 +100,7 @@ public class MapWorkspace extends AppWorkspaceComponent {
     HBox linePane3;
     Label lineLabel;
     ComboBox lineList;
-    Button addLine, removeLine, addStation, removeStation, listStation,editLine;
+    Button addLine, removeLine, addStation, removeStation, listStation, editLine;
     Slider lineThickness;
 
     //StationPane
@@ -151,7 +156,7 @@ public class MapWorkspace extends AppWorkspaceComponent {
     // CALL THIS A CANVAS, BUT IT'S REALLY JUST A Pane
     Pane canvas;
     ScrollPane canvasScroll;
-    
+
     Scene temp;
 
     //All Controllers
@@ -159,7 +164,8 @@ public class MapWorkspace extends AppWorkspaceComponent {
     canvasController canvasControl;
     StationController stationControl;
     DecorController decorControl;
-    
+    FontController fontControl;
+
     // HERE ARE THE CONTROLLERS
     // HERE ARE OUR DIALOGS
     AppMessageDialogSingleton messageDialog;
@@ -187,7 +193,7 @@ public class MapWorkspace extends AppWorkspaceComponent {
         // LAYOUT THE APP
         initLayout();
         temp = gui.getWindow().getScene();
-        
+
         //gui.getFileController().handleNewRequest();
         // HOOK UP THE CONTROLLERS
         initController();
@@ -201,26 +207,21 @@ public class MapWorkspace extends AppWorkspaceComponent {
     public ComboBox getStationList() {
         return stationList;
     }
-    
-    
-    
-    
-    
 
     public void welcome() {
 
         PropertiesManager props = PropertiesManager.getPropertiesManager();
-        
+
         BorderPane mainPane = new BorderPane();
-        
+
         //LeftPane
         VBox leftPane = new VBox();
         VBox rightPane = new VBox();
         String imagePath = FILE_PROTOCOL + PATH_IMAGES + props.getProperty("WELCOME_ICON");
-        Image img = new Image(imagePath,600,250,false,false);
-        
+        Image img = new Image(imagePath, 600, 250, false, false);
+
         ImageView view = new ImageView(img);
-        
+
         //view.resize(150, 75);
         rightPane.getChildren().add(view);
         rightPane.setAlignment(Pos.TOP_CENTER);
@@ -239,7 +240,7 @@ public class MapWorkspace extends AppWorkspaceComponent {
                 gui.getWindow().setTitle(gui.getWindow().getTitle() + "-" + txt1.getText());
                 gui.getWindow().setScene(gui.getPrimaryScene());
                 gui.getFileController().handleNewRequest();
-                
+
             }
         });
         txt2.setOnMouseClicked(e -> {
@@ -249,7 +250,7 @@ public class MapWorkspace extends AppWorkspaceComponent {
                 gui.getWindow().setTitle(gui.getWindow().getTitle() + "-" + txt2.getText());
                 gui.getWindow().setScene(gui.getPrimaryScene());
                 gui.getFileController().handleNewRequest();
-                
+
             }
         });
 
@@ -262,35 +263,31 @@ public class MapWorkspace extends AppWorkspaceComponent {
 
             if (e.getClickCount() > 0) {
 
-                gui.getWindow().setTitle( "Metro Map Maker -" + txt3.getText());
+                gui.getWindow().setTitle("Metro Map Maker -" + txt3.getText());
                 gui.getWindow().setScene(gui.getPrimaryScene());
                 gui.getFileController().handleNewRequest();
-                
+
             }
         });
-        
+
         mainPane.setLeft(leftPane);
         mainPane.setCenter(rightPane);
-        leftPane.setStyle("-fx-background-color:#f2c58e;\n" +
-"    -fx-padding: 90 10 0 30;\n" +
-"    -fx-font: bold 24px \"serif\";"
+        leftPane.setStyle("-fx-background-color:#f2c58e;\n"
+                + "    -fx-padding: 90 10 0 30;\n"
+                + "    -fx-font: bold 24px \"serif\";"
                 + "-fx-min-width:300;"
                 + "-fx-spacing:60;"
                 + "-fx-border-width:3px;-fx-border-color:#ab353d;");
-        
-        rightPane.setStyle("-fx-background-color:#f2c58e;\n" +
-"    -fx-padding: 60 10 0 30;\n" +
-"    -fx-font: bold 24px \"serif\";"
+
+        rightPane.setStyle("-fx-background-color:#f2c58e;\n"
+                + "    -fx-padding: 60 10 0 30;\n"
+                + "    -fx-font: bold 24px \"serif\";"
                 + "-fx-min-width:300;"
                 + "-fx-spacing:60;"
                 + "-fx-border-width:3px;-fx-border-color:#ab353d;");
-        
-        
+
         Scene scene = new Scene(mainPane);
-        
-        
-        
-        
+
         gui.getWindow().setScene(scene);
 
     }
@@ -350,10 +347,10 @@ public class MapWorkspace extends AppWorkspaceComponent {
         linePane1 = new HBox();
         linePane2 = new HBox();
         linePane3 = new HBox();
-        
+
         lineColor = new ColorPicker(Color.web(BLACK_HEX));
         lineColor.setTooltip(new Tooltip("Choose Line Color"));
-        
+
         addLine = gui.initChildButton(linePane2, ADD_LINE_ICON.toString(), ADD_LINE_TOOLTIP.toString(), false);
         removeLine = gui.initChildButton(linePane2, REMOVE_LINE_ICON.toString(), REMOVE_LINE_TOOLTIP.toString(), false);
         addStation = gui.initChildButton(linePane2, ADD_STATION_ICON.toString(), ADD_STATION_TOOLTIP.toString(), false);
@@ -361,10 +358,9 @@ public class MapWorkspace extends AppWorkspaceComponent {
         editLine = new Button("Edit\nLine");
         listStation = gui.initChildButton(linePane2, LIST_STATION_ICON.toString(), LIST_STATION_TOOLTIP.toString(), false);
         lineThickness = new Slider(0, 10, 1);
-        
 
         linePane1.getChildren().addAll(lineLabel, lineList, editLine);
-       // linePane2.getChildren().addAll(addLine, removeLine, addStation, removeStation, listStation);
+        // linePane2.getChildren().addAll(addLine, removeLine, addStation, removeStation, listStation);
         linePane3.getChildren().add(lineThickness);
         lineToolPane.getChildren().addAll(linePane1, linePane2, linePane3);
         //lineToolPane.getChildren().addAll();
@@ -379,7 +375,7 @@ public class MapWorkspace extends AppWorkspaceComponent {
         stationPaneLabel = new Label("Metro Stations");
         stationFillColor = new ColorPicker(Color.valueOf(BLACK_HEX));
         stationFillColor.setTooltip(new Tooltip("Fill Station Circle"));
-        
+
         stationList = new ComboBox();
         addStop = gui.initChildButton(stationPane2, ADD_STOP_ICON.toString(), ADD_STOP_TOOLTIP.toString(), false);
         removeStop = gui.initChildButton(stationPane2, REMOVE_STOP_ICON.toString(), REMOVE_LINE_TOOLTIP.toString(), false);
@@ -388,7 +384,7 @@ public class MapWorkspace extends AppWorkspaceComponent {
         rotateLabel = gui.initChildButton(stationPane2, ROTATE_ICON.toString(), ROTATE_TOOLTIP.toString(), false);
         stopThickness = new Slider(0, 10, 1);
 
-        stationPane1.getChildren().addAll(stationPaneLabel, stationList,stationFillColor);
+        stationPane1.getChildren().addAll(stationPaneLabel, stationList, stationFillColor);
         //stationPane2.getChildren().addAll(addStop, removeStop, snap, moveLabel, rotateLabel);
         stationPane3.getChildren().addAll(stopThickness);
 
@@ -400,9 +396,9 @@ public class MapWorkspace extends AppWorkspaceComponent {
         navContainer = new HBox();
         starting = new ComboBox();
         ending = new ComboBox();
-        
+
         navContainer.getChildren().addAll(starting, ending);
-        
+
         navigate = gui.initChildButton(navContainer, FIND_ROUTE_ICON.toString(), FIND_ROUTE_TOOLTIP.toString(), false);
         navTool.getChildren().addAll(navContainer);
         editToolbar.getChildren().add(navTool);
@@ -414,14 +410,14 @@ public class MapWorkspace extends AppWorkspaceComponent {
         decorLabel = new Label("Decor");
         backgroundColor = new ColorPicker(Color.valueOf(BLACK_HEX));
         backgroundColor.setTooltip(new Tooltip("Choose Background Color"));
-        decorContent.getChildren().addAll(decorLabel,backgroundColor);
-        
+        decorContent.getChildren().addAll(decorLabel, backgroundColor);
+
         imageBack = gui.initChildButton(decorContainer, IMAGE_BACK_ICON.toString(), IMAGE_BACK_TOOLTIP.toString(), false);
         addImage = gui.initChildButton(decorContainer, ADD_IMAGE_ICON.toString(), ADD_IMAGE_TOOLTIP.toString(), false);
         addLabel = gui.initChildButton(decorContainer, ADD_LABEL_ICON.toString(), ADD_LABEL_TOOLTIP.toString(), false);
         removeElement = gui.initChildButton(decorContainer, REMOVE_ELEMENT_ICON.toString(), REMOVE_ELEMENT_TOOLTIP.toString(), false);
         //decorContainer.getChildren().addAll(addLabel, imageBack, addImage, removeElement);
-        decorTool.getChildren().addAll(decorContent,decorContainer);
+        decorTool.getChildren().addAll(decorContent, decorContainer);
         editToolbar.getChildren().add(decorTool);
 
         //Font Tool
@@ -434,10 +430,10 @@ public class MapWorkspace extends AppWorkspaceComponent {
         fontColor.setTooltip(new Tooltip("Choose Font color"));
         fontBold = toggleChildButton(fontTool2, BOLD_ICON.toString(), BOLD_TOOLTIP.toString(), false);
         fontItalic = toggleChildButton(fontTool2, ITALIC_ICON.toString(), ITALIC_TOOLTIP.toString(), false);
-        fontSize = new ComboBox();
-        fontName = new ComboBox();
+        fontSize = initComboBox("FONT_SIZE_COMBO_BOX_OPTIONS");
+        fontName = initComboBox("FONT_FAMILY_COMBO_BOX_OPTIONS");
 
-        fontTool1.getChildren().addAll(fontLabel,fontColor);
+        fontTool1.getChildren().addAll(fontLabel, fontColor);
         fontTool2.getChildren().addAll(fontSize, fontName);
 
         fontTool.getChildren().addAll(fontTool1, fontTool2);
@@ -455,7 +451,7 @@ public class MapWorkspace extends AppWorkspaceComponent {
         paneUp = gui.initChildButton(viewPane2, SHRINK_ICON.toString(), SHRINK_TOOLTIP.toString(), false);
         paneDown = gui.initChildButton(viewPane2, DILATE_ICON.toString(), DILATE_TOOLTIP.toString(), false);
         viewPane1.getChildren().addAll(viewLabel, grid);
-       // viewPane2.getChildren().addAll(zoomIn, zoomOut, paneUp, paneDown);
+        // viewPane2.getChildren().addAll(zoomIn, zoomOut, paneUp, paneDown);
         viewPane.getChildren().addAll(viewPane1, viewPane2);
         editToolbar.getChildren().add(viewPane);
 
@@ -465,12 +461,12 @@ public class MapWorkspace extends AppWorkspaceComponent {
         canvas.getChildren().add(debugText);
         debugText.setX(100);
         debugText.setY(100);
-        
-       // canvasScroll = new ScrollPane();
-        MapData data = (MapData)app.getDataComponent();
+
+        // canvasScroll = new ScrollPane();
+        MapData data = (MapData) app.getDataComponent();
         data.setShapes(canvas.getChildren());
-       // canvasScroll.setContent(canvas);
-        
+        // canvasScroll.setContent(canvas);
+
         // AND MAKE SURE THE DATA MANAGER IS IN SYNCH WITH THE PANE
         // AND NOW SETUP THE WORKSPACE
         workspace = new BorderPane();
@@ -479,154 +475,199 @@ public class MapWorkspace extends AppWorkspaceComponent {
 
         //gui.getFileController().handleNewRequest();
     }
-    
-    private void initController(){
-        
+
+    private void initController() {
+
         canvasControl = new canvasController(app);
         lineControl = new LineController(app);
         stationControl = new StationController(app);
         decorControl = new DecorController(app);
-        
+        fontControl = new FontController(app);
+
         //Listeners for Line toolbar
-        addLine.setOnAction(e->{
-        
+        addLine.setOnAction(e -> {
+
             lineControl.processAddLine();
         });
-        removeLine.setOnAction(e->{
-        
+        removeLine.setOnAction(e -> {
+
             lineControl.processRemoveLine();
         });
-        
-        this.addStation.setOnAction(e->{
-        
+
+        this.addStation.setOnAction(e -> {
+
             lineControl.processAddStationToLine();
         });
-        
-        this.addStation.setOnAction(e->{
-        
+
+        this.addStation.setOnAction(e -> {
+
             lineControl.processAddStationToLine();
         });
-        
-        this.editLine.setOnAction(e->{
-        
+
+        this.editLine.setOnAction(e -> {
+
             lineControl.processEditLine();
         });
-        this.removeStation.setOnAction(e->{
-        
+        this.removeStation.setOnAction(e -> {
+
             lineControl.processRemoveStationFromLine();
         });
-        this.listStation.setOnAction(e->{
-        
+        this.listStation.setOnAction(e -> {
+
             lineControl.processListAllStation();
         });
-        this.lineList.setOnAction(e->{
-        
+        this.lineList.setOnAction(e -> {
+
             lineControl.processLineSelection();
         });
-        this.lineThickness.valueProperty().addListener(new ChangeListener(){
+        this.lineThickness.valueProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                 lineControl.processStrokeChangeRequest();
+                lineControl.processStrokeChangeRequest();
             }
         });
-        
-        
+
         //Listeners for Station Toolbar
-        addStop.setOnAction(e->{
-        
+        addStop.setOnAction(e -> {
+
             stationControl.processAddStation();
         });
-        
-        removeStop.setOnAction(e->{
-        
+
+        removeStop.setOnAction(e -> {
+
             stationControl.processRemoveStation();
         });
-        
-        this.moveLabel.setOnAction(e->{
-        
+
+        this.moveLabel.setOnAction(e -> {
+
             stationControl.processMoveLabel();
         });
-        this.rotateLabel.setOnAction(e->{
-        
+        this.rotateLabel.setOnAction(e -> {
+
             stationControl.processRotateLabel();
         });
-        this.stationFillColor.valueProperty().addListener(new ChangeListener(){
+        this.stationFillColor.valueProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
                 stationControl.processChangeFillColor();
             }
-          
+
         });
-        
-        this.stopThickness.valueProperty().addListener(new ChangeListener(){
+
+        this.stopThickness.valueProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
                 stationControl.processChangeRadius();
             }
         });
-        
-        
-        
-        
-        
-        
-        canvas.setOnMouseClicked(e->{
-        
-            canvasControl.processMousePress((int)e.getX(), (int)e.getY());
+
+        canvas.setOnMouseClicked(e -> {
+
+            canvasControl.processMousePress((int) e.getX(), (int) e.getY());
         });
-        
-        canvas.setOnMouseDragged(e->{
-        
-            canvasControl.mouseDrag((int)e.getX(), (int)e.getY());
+
+        canvas.setOnMouseDragged(e -> {
+
+            canvasControl.mouseDrag((int) e.getX(), (int) e.getY());
         });
-        
-        canvas.setOnMouseReleased(e->{
-        
-            canvasControl.mouseRelease((int)e.getX(), (int)e.getY());
+
+        canvas.setOnMouseReleased(e -> {
+
+            canvasControl.mouseRelease((int) e.getX(), (int) e.getY());
         });
-        
-        
+
         //Decor toolbar listeners
-        
-        this.backgroundColor.valueProperty().addListener(new ChangeListener(){
-         @Override
+        this.backgroundColor.valueProperty().addListener(new ChangeListener() {
+            @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
                 decorControl.processChangeBackgroundFill();
             }
         });
-        this.imageBack.setOnAction(e->{
-        
+        this.imageBack.setOnAction(e -> {
+
             decorControl.processImageBackground();
         });
-        this.addImage.setOnAction(e->{
-        
+        this.addImage.setOnAction(e -> {
+
             decorControl.processAddImageOverLay();
         });
-        this.addLabel.setOnAction(e->{
-        
+        this.addLabel.setOnAction(e -> {
+
             decorControl.processAddLabelNote();
+        });
+        this.removeElement.setOnAction(e -> {
+
+            decorControl.processRemoveElement();
+            System.out.println("processed");
         });
         
         
         
+        //Font toolbar listeners
+        this.fontColor.setOnAction(e->{
         
+            fontControl.changeTextColor();
+        });
+        this.fontBold.setOnAction(e->{
         
+            fontControl.changeTextFont();
+        });
+        this.fontItalic.setOnAction(e->{
+        
+            fontControl.changeTextFont();
+        });
+        
+        this.fontSize.setOnAction(e->{
+        
+            fontControl.changeTextFont();
+        });
+        this.fontName.setOnAction(e->{
+        
+            fontControl.changeTextFont();
+        });
+        
+
         //Grid toggle
-        this.grid.setOnAction(e->{
-        
-            if(grid.isSelected()){
-            
+        this.grid.setOnAction(e -> {
+
+            if (grid.isSelected()) {
+
                 workspace.getStyleClass().add(GRID_LINE);
-            }else{
-            
+            } else {
+
                 workspace.getStyleClass().remove(GRID_LINE);
             }
         });
-        
-        
-        
-        
+
     }
+    
+    
+    public javafx.scene.text.Font fontSettings(){
+    
+        String fontFamily = fontName.getSelectionModel().getSelectedItem().toString();
+        int size = Integer.valueOf(fontSize.getSelectionModel().getSelectedItem().toString());
+        FontWeight weight = FontWeight.NORMAL;
+        if (fontBold.isPressed()) weight = FontWeight.BOLD;
+        FontPosture posture = FontPosture.REGULAR;
+        if (fontItalic.isPressed()) posture = FontPosture.ITALIC;
+        javafx.scene.text.Font newFont = javafx.scene.text.Font.font(fontFamily, size);
+        return newFont;
+    }
+    
+    private ComboBox initComboBox(String comboPropertyList) {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        ArrayList<String> comboOptions = props.getPropertyOptionsList(comboPropertyList);
+        ObservableList oList = FXCollections.observableList(comboOptions);
+        ComboBox cBox = new ComboBox(oList);
+        cBox.getSelectionModel().selectFirst();
+        return cBox;
+    }
+    
+
+    public ColorPicker getFontColor() {
+        return fontColor;
+    }
+    
 
     public ColorPicker getStationColor() {
         return stationColor;
@@ -659,43 +700,27 @@ public class MapWorkspace extends AppWorkspaceComponent {
     public void setLineList(ComboBox lineList) {
         this.lineList = lineList;
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     public ToggleButton toggleChildButton(Pane toolbar, String icon, String tooltip, boolean disabled) {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
-	
-	// LOAD THE ICON FROM THE PROVIDED FILE
+
+        // LOAD THE ICON FROM THE PROVIDED FILE
         String imagePath = FILE_PROTOCOL + PATH_IMAGES + props.getProperty(icon);
         Image buttonImage = new Image(imagePath);
-	
-	// NOW MAKE THE BUTTON
+
+        // NOW MAKE THE BUTTON
         ToggleButton button = new ToggleButton();
         button.setDisable(disabled);
         button.setGraphic(new ImageView(buttonImage));
         Tooltip buttonTooltip = new Tooltip(props.getProperty(tooltip));
         button.setTooltip(buttonTooltip);
-	
-	// PUT THE BUTTON IN THE TOOLBAR
+
+        // PUT THE BUTTON IN THE TOOLBAR
         toolbar.getChildren().add(button);
-	
-	// AND RETURN THE COMPLETED BUTTON
+
+        // AND RETURN THE COMPLETED BUTTON
         return button;
     }
-    
-    
-    
-    
-    
-    
-    
-    
 
     /**
      * This function specifies the CSS style classes for all the UI components
@@ -707,9 +732,7 @@ public class MapWorkspace extends AppWorkspaceComponent {
 
         //File toolbar style
         gui.getFileToolbar().getStyleClass().add(TOP_TOOLBAR);
-        
-        
-        
+
         //UndoRedo toolbar Style
         undoRedo.getStyleClass().add(TOP_TOOLBAR);
         undo.getStyleClass().add(CLASS_FILE_BUTTON);
@@ -726,10 +749,6 @@ public class MapWorkspace extends AppWorkspaceComponent {
         editToolbar.getStyleClass().add(CLASS_EDIT_TOOLBAR);
 
         // canvas style
-        
-        
-        
-        
         //Line tool style
         lineToolPane.getStyleClass().add(CLASS_EDIT_TOOLBAR_ROW);
         linePane1.getStyleClass().add(ROW_ITEM);
@@ -758,8 +777,7 @@ public class MapWorkspace extends AppWorkspaceComponent {
         stationPaneLabel.getStyleClass().add(SEC_LABEL);
         stationList.getStyleClass().add(COMBO_STYLE);
         stationFillColor.getStyleClass().add(CLASS_COLOR_CHOOSER_CONTROL);
-        
-        
+
         //Navigation too style
         navTool.getStyleClass().add(CLASS_EDIT_TOOLBAR_ROW);
         navContainer.getStyleClass().add(ROW_ITEM);
@@ -777,7 +795,7 @@ public class MapWorkspace extends AppWorkspaceComponent {
         removeElement.getStyleClass().add(BIG_BUTTON);
         decorLabel.getStyleClass().add(SEC_LABEL);
         backgroundColor.getStyleClass().add(CLASS_COLOR_CHOOSER_CONTROL);
-        
+
         //Font tool style
         fontTool.getStyleClass().add(CLASS_EDIT_TOOLBAR_ROW);
         fontTool1.getStyleClass().add(ROW_ITEM);
@@ -798,7 +816,7 @@ public class MapWorkspace extends AppWorkspaceComponent {
         paneUp.getStyleClass().add(SMALL_BUTTON);
         paneDown.getStyleClass().add(SMALL_BUTTON);
         viewLabel.getStyleClass().add(SEC_LABEL);
-        
+
     }
 
     /**
