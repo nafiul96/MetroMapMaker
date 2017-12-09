@@ -35,6 +35,8 @@ import map.data.MapData;
 import map.data.MapState;
 import static map.data.MapState.selecting_shape;
 import map.trans.AddNode_Transaction;
+import map.trans.BackgroundGradient_Transaction;
+import map.trans.BackgroundImage_Transaction;
 import map.trans.History;
 
 /**
@@ -56,10 +58,11 @@ public class DecorController {
     void processChangeBackgroundFill() {
 
         MapWorkspace space = (MapWorkspace) app.getWorkspaceComponent();
-
-        BackgroundFill fill = new BackgroundFill(space.backgroundColor.getValue(), null, null);
-        Background background = new Background(fill);
-        space.getCanvas().setBackground(background);
+        jTPS tps = History.getTps();
+        MapData data = (MapData)app.getDataComponent();
+        BackgroundGradient_Transaction newTransaction = new BackgroundGradient_Transaction(space.getCanvas(),space.backgroundColor.getValue());
+        tps.addTransaction(newTransaction);
+        
     }
 
     void processImageBackground() {
@@ -73,6 +76,10 @@ public class DecorController {
                     BackgroundSize.DEFAULT);
             MapWorkspace space = (MapWorkspace) app.getWorkspaceComponent();
             Background back = new Background(myBI);
+            jTPS tps = History.getTps();
+           // MapData data = (MapData)app.getDataComponent();
+            BackgroundImage_Transaction newTransaction = new BackgroundImage_Transaction(back,space.getCanvas());
+            tps.addTransaction(newTransaction);
             space.getCanvas().setBackground(back);
 
         }

@@ -6,33 +6,36 @@
 package map.trans;
 
 import jtps.jTPS_Transaction;
-import map.data.MapData;
-import map.data.TrainLine;
+import map.data.Station;
 
 /**
  *
  * @author nafi
  */
-public class AddLine_Transaction implements jTPS_Transaction {
+public class PositioningLabel_Transaction implements jTPS_Transaction{
 
-    MapData data;
-    TrainLine line;
+    Station station;
 
-    public AddLine_Transaction(MapData data, TrainLine line) {
-        this.data = data;
-        this.line = line;
+    public PositioningLabel_Transaction(Station station) {
+        this.station = station;
     }
-
+    
+    
+    
+    
+    
+    
     @Override
     public void doTransaction() {
-
-        data.getShapes().addAll(line.getStartText(), line.getEndText(), line);
+        
+        station.moveLabel();
+        
     }
 
     @Override
     public void undoTransaction() {
-
-        data.removeLine(line.getName());
+        
+        station.unmoveLabel();
     }
-
+    
 }

@@ -26,7 +26,9 @@ import javax.json.stream.JsonGenerator;
 import djf.components.AppDataComponent;
 import djf.components.AppFileComponent;
 import java.math.BigDecimal;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Set;
 import javafx.scene.text.Text;
 import map.data.MapData;
 import map.data.Station;
@@ -59,11 +61,11 @@ public class MapFiles implements AppFileComponent {
         
         for(int i=0; i<manager.getShapes().size(); i++){
         
-            Shape shape = (Shape)shapes.get(i);
+            Node shape = shapes.get(i);
             if(shape instanceof TrainLine){
             
                 TrainLine tline = (TrainLine)shape;
-                String name = tline.getName().getText();
+                String name = tline.getName();
                 Color col = (Color)tline.getStroke();
                 double red = col.getRed();
                 double green = col.getGreen();
@@ -75,22 +77,30 @@ public class MapFiles implements AppFileComponent {
                         .add("blue", blue)
                         .add("alpha", alpha)
                         .build();
-                JsonArray lineStation = Json.createArrayBuilder().build();
+                JsonArrayBuilder lineStation = Json.createArrayBuilder();
+                
+                Set<String> k = tline.getStops().keySet();
+                Iterator it = k.iterator();
+                
+                while(it.hasNext()){
+                
+                    lineStation.add(tline.getStops().get(it.next()).getName().getText());
+                }
+                
+                JsonArray lineStations = lineStation.build();
+                
                 JsonObject lineJas = Json.createObjectBuilder()
                         .add("name", name)
                         .add("circular", tline.isCircular())
                         .add("color", color)
-                        .add("station_names", lineStation)
+                        .add("station_names", lineStations)
                         .build();
                 
                 
                 //lineStation.addAll(tline.getStation());
                 
                 
-                for(int k=0; i< tline.getStation().size(); k++){
                 
-                    
-                }
                 
                 linesArray.add(lineJas);
                 
@@ -146,29 +156,45 @@ public class MapFiles implements AppFileComponent {
         JsonArray lineArray = json.getJsonArray("lines");
         System.out.println("couted to " + (c++));
         JsonArray stationArray = json.getJsonArray("stations");
-        //load all the lines;
-        System.out.println("couted to " + (c++));
         
-        for(int i = 0; i<lineArray.size(); i++){
+        for(int i=0; i< stationArray.size(); i++){
         
-            JsonObject lineObj = lineArray.getJsonObject(i);
-            Shape line = loadShape(lineObj,dataManager,stationArray);
-            dataManager.getShapes().add(line);
-        }
-        
-        for(int j=0; j< stationArray.size(); j++){
-        
-            JsonObject obj = stationArray.getJsonObject(j);
-            Text txt = new Text(obj.getString("name"));
+            JsonObject obj = stationArray.getJsonObject(i);
+            //Station temp = new Station(new Text("name"));
             double x = this.addAsDouble(obj, "x");
             double y = this.addAsDouble(obj, "y");
-            dataManager.startNewStation((int)x, (int)y, txt);
+            dataManager.startNewStation((int)x, (int)y,new Text(obj.getString("name")));
+            
+            //dataManager.addNode(temp);
         }
         
+        for(int k=0; k<lineArray.size(); k++){
         
+            JsonObject obj = lineArray.getJsonObject(k);
+            //Text txt = new Text(obj.getString("name"));
+            
+           
+            TrainLine temp = dataManager.loadNewLine(obj.getString("name"));
+            
+            JsonArray js = obj.getJsonArray("station_names");
+            for(int p=0; p<js.size(); p++){
+            
+                Station st = dataManager.getStation().get(js.get(p).toString());
+                if(st != null){
+                    dataManager.processAddStationToLine((int)st.getCenterX(), (int)st.getCenterY());
+                    //temp.addStop(st.getName().getText(), st);
+                }
+            }
+        }
+          
         
         
     }
+    
+    
+    
+    
+    
 
     @Override
     public void exportData(AppDataComponent data, String filePath) throws IOException {
@@ -198,7 +224,7 @@ public class MapFiles implements AppFileComponent {
         JsonObject col = lineObj.getJsonObject("color");
         Color lineColor = loadLineColor(col);
         JsonArray stops = lineObj.getJsonArray("station_names");
-        TrainLine myLine = new TrainLine(new Text(name),isCircular);
+        TrainLine myLine = new TrainLine(name,isCircular);
         myLine.setStroke(lineColor);
         myLine.setFill(lineColor);
         myLine.setStrokeWidth(10);

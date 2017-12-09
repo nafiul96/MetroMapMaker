@@ -27,9 +27,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import jtps.jTPS;
 import map.data.MapData;
 import map.data.MapState;
 import map.data.TrainLine;
+import map.trans.History;
+import map.trans.LineEdit_Transaction;
 
 /**
  *
@@ -149,13 +152,10 @@ public class LineController {
         
             if(!txt.getText().isEmpty()){
             
-                line.setName(txt.getText());
-                line.setStroke(picker.getValue());
-                int k = space.getLineList().getSelectionModel().getSelectedIndex();
-                space.getLineList().getItems().add(k,txt.getText());
-                space.getLineList().getItems().remove(k+1);
-                //Scene appScene = app.getGUI().getPrimaryScene();
-               // appScene.setCursor(Cursor.CROSSHAIR);
+                jTPS tps = History.getTps();
+MapData data = (MapData)app.getDataComponent();
+LineEdit_Transaction newTransaction = new LineEdit_Transaction(app,line,line.getName(), (Color) line.getStroke(),txt.getText(),picker.getValue());
+tps.addTransaction(newTransaction);
                 dial.close();
             }
         });
@@ -207,15 +207,18 @@ public class LineController {
         
         ListView v = new ListView();
         Set k = line.getStops().keySet();
+        
         Iterator  it = k.iterator();
         LinkedList<String> s = new LinkedList();
         while(it.hasNext()){
-        
+        /*
             String t = (String)it.next();
             if(line.getStops().get(t) != null){
             
                 s.addLast(t);
             }
+*/          
+            s.add(line.getStops().get(it.next()).getName().getText());
         }
         v.getItems().setAll(s);
         ScrollPane box = new ScrollPane();
@@ -229,7 +232,9 @@ public class LineController {
     void processLineSelection(){
     
         MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
+        if(!space.getLineList().getItems().isEmpty()){
         data.selectLine((String)space.getLineList().getValue());
+        }
     }
     
     void processStrokeChangeRequest(){

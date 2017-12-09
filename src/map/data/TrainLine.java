@@ -15,7 +15,6 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polyline;
@@ -35,8 +34,12 @@ public class TrainLine extends Polyline implements MapElement {
     ObservableList<Double> point;
     double startX, startY, endX, endY;
     HashMap<String, Station> stops;
+
+    public HashMap<String, Station> getStops() {
+        return stops;
+    }
     ArrayList<String> station;
-    
+
     public TrainLine(String myName, boolean isCircular) {
 
         //LabelelingInformation
@@ -53,8 +56,6 @@ public class TrainLine extends Polyline implements MapElement {
         stops = new HashMap<>();
         station = new ArrayList<>();
         initTextControl();
-        
-       
 
     }
 
@@ -90,6 +91,38 @@ public class TrainLine extends Polyline implements MapElement {
         stops.put(stationName, station);
 
     }
+    
+    public void removeStationFromLine(int x, int y) {
+        
+        Set k = this.stops.keySet();
+        Iterator it = k.iterator();
+        Station temp = null;
+        while(it.hasNext()){
+        
+            temp = this.stops.get(it.next());
+            if(temp != null && temp.contains(x, y)){
+            
+                temp.lines.replace(this.name, this, null);
+                this.stops.replace(temp.name.getText(), temp, null);
+                
+                break;
+            }
+        }
+        if(temp !=null){
+        
+            for(int i=0; i< point.size(); i = i+2){
+            
+                if(point.get(i) == temp.getCenterX() && point.get(i+1) == temp.getCenterY()){
+                
+                    point.remove(i);point.remove(i);
+                    return;
+                }
+            }
+        }
+        
+    }
+    
+    
 
     public String getName() {
         return name;
@@ -185,22 +218,22 @@ public class TrainLine extends Polyline implements MapElement {
 
     @Override
     public void size(int x, int y) {
-       // dragEnd(x,y);
+        
         endX = x;
         endY = y;
         
-        if(point.size() > 4){
+        if(point.size() == 4){
         
             point.remove(point.size()-1);
             point.remove(point.size()-1);
         }
+       //point.remove(point.size()-1);
       // point.remove(point.size()-1);
-     // point.remove(point.size()-1);
        point.add(endX);
        point.add(endY);
        
-      // endText.setX(endX);
-      // endText.setY(endY);
+       //endText.setX(endX);
+       //endText.setY(endY);
        endText.xProperty().set(endX);
         endText.yProperty().set(endY);       
     }
@@ -251,7 +284,7 @@ public class TrainLine extends Polyline implements MapElement {
         startY = y;
         point.add(0, startY);
         point.add(0, startX);
-        startText.xProperty().set(point.get(0));
+        startText.xProperty().set(point.get(0)-10);
         startText.yProperty().set(point.get(1));
 
     }
@@ -260,7 +293,7 @@ public class TrainLine extends Polyline implements MapElement {
 
         //endText.setX(x);
         //endText.setY(y);
-
+        
         point.remove(point.size() - 1);
         point.remove(point.size() - 1);
         endX = x;
@@ -269,7 +302,7 @@ public class TrainLine extends Polyline implements MapElement {
        point.add(endX);
        point.add(endY);
         // startText.relocate(endX, endY);
-        endText.xProperty().set(point.get(point.size()-2));
+        endText.xProperty().set(point.get(point.size()-2)+10);
         endText.yProperty().set(point.get(point.size()-1));
        
     }
@@ -296,58 +329,20 @@ public class TrainLine extends Polyline implements MapElement {
         
         
         
-      //  endText.setOnMouseReleased(e->{
+       // endText.setOnMouseReleased(e->{
         
-        //    point.add(e.getX());
-        //    point.add(e.getY());
-       // });
+         //   point.add(e.getX());
+         //   point.add(e.getY());
+        //});
         
-        //startText.setOnMouseReleased(e->{
+       // startText.setOnMouseReleased(e->{
         
-        //    point.add(0,e.getY());
+          //  point.add(0,e.getY());
          //   point.add(0,e.getX());
        // });
          
         
         
     }
-
-    void removeStationFromLine(int x, int y) {
-        
-        Set k = this.stops.keySet();
-        Iterator it = k.iterator();
-        Station temp = null;
-        while(it.hasNext()){
-        
-            temp = this.stops.get(it.next());
-            if(temp != null && temp.contains(x, y)){
-            
-                temp.lines.replace(this.name, this, null);
-                this.stops.replace(temp.name.getText(), temp, null);
-                break;
-            }
-        }
-        if(temp !=null){
-        
-            for(int i=0; i< point.size(); i = i+2){
-            
-                if(point.get(i) == temp.getCenterX() && point.get(i+1) == temp.getCenterY()){
-                
-                    point.remove(i);point.remove(i);
-                    return;
-                }
-            }
-        }
-        
-    }
-
-    public HashMap<String, Station> getStops() {
-        return stops;
-    }
-
-    
-    
-    
-    
 
 }

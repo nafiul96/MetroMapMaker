@@ -1,0 +1,32 @@
+
+{
+    "name":"WikiCity",
+    "lines":[
+        {
+            "name":"A",
+            "circular":false,
+            "color":{
+                "red":0.6000000238418579,
+                "green":0.3019607961177826,
+                "blue":0.4000000059604645,
+                "alpha":1.0
+            },
+            "station_names":[
+                "x",
+                "y"
+            ]
+        }
+    ],
+    "stations":[
+        {
+            "name":"x",
+            "x":406.0,
+            "y":90.0
+        },
+        {
+            "name":"y",
+            "x":455.0,
+            "y":245.0
+        }
+    ]
+}

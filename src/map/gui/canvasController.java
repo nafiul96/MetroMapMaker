@@ -45,6 +45,7 @@ public class canvasController {
         
             data.startNewLine(x, y);
            // data.setState(sizing_line);
+           
         }else if(data.getState() == starting_station){
         
             data.startNewStation(x, y, new Text(textGetter()));
@@ -53,8 +54,7 @@ public class canvasController {
         
             Node node = data.selectTopNode(x, y);
         }else if(data.getState() == remove_shape){
-        
-            data.selectShape(x, y);
+            Node node = data.selectTopNode(x, y);
             data.removeSelection();
             data.setState(selecting_shape);
         }else if(data.getState() == deleting_line){
@@ -67,6 +67,8 @@ public class canvasController {
         
             data.processRemoveStationFromLine(x,y);
         }
+        
+        app.getGUI().updateToolbarControls(false);
     }
     
     public void mouseDrag(int x, int y){
@@ -83,6 +85,8 @@ public class canvasController {
             //line.drag(x, y);
             
         }
+        
+        app.getGUI().updateToolbarControls(false);
     }
     
     public void mouseRelease(int x, int y){
@@ -93,6 +97,8 @@ public class canvasController {
         
             data.setState(dragging_line);
         }
+        
+        app.getGUI().updateToolbarControls(false);
     }
     
     

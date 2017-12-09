@@ -36,19 +36,16 @@ public class Station extends Ellipse implements MapElement {
         startCenterX = 0.0;
         startCenterY = 0.0;
         this.name = name;
+
         this.transVect = new double[][]{{5,0},{-5,0},{0,5},{0,-5}};
         ind = 0; 
         
        // name.xProperty().bind(this.centerXProperty());
        // name.yProperty().bind(this.centerYProperty());
-       this.setOnMouseDragged(e->{
-       
-           drag((int)e.getX(), (int)e.getY());
-       });
         lines = new HashMap<>();
 
     }
-
+    
     public void moveLabel(){
     
         ind = ++ind%4;
@@ -56,11 +53,21 @@ public class Station extends Ellipse implements MapElement {
         name.yProperty().set(startCenterY+transVect[ind][1]);
     }
     
-    public void addLine(String lineName, TrainLine trainline) {
-
-        lines.put(lineName, trainline);
-
+    public void unmoveLabel(){
+    
+        if(ind==0){
+            
+            ind = 3;
+            
+        }else{
+        
+            ind--;
+        }
+        
+        name.xProperty().set(startCenterX+transVect[ind][0]);
+        name.yProperty().set(startCenterY+transVect[ind][1]);
     }
+    
     public void rotateLabel(){
     
         if(name.getRotate() == 90){
@@ -69,6 +76,12 @@ public class Station extends Ellipse implements MapElement {
             return;
         }
         name.setRotate(90);
+    }
+
+    public void addLine(String lineName, TrainLine trainline) {
+
+        lines.put(lineName, trainline);
+
     }
 
     public Text getName() {
@@ -105,6 +118,7 @@ public class Station extends Ellipse implements MapElement {
         
         this.name.xProperty().set(newX+transVect[ind][0]);
         this.name.yProperty().set(newY+transVect[ind][1]);
+        
         Iterator it = lines.keySet().iterator();
         
         while(it.hasNext()){

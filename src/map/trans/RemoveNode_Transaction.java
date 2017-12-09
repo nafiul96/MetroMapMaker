@@ -5,6 +5,7 @@
  */
 package map.trans;
 
+import djf.AppTemplate;
 import javafx.scene.Node;
 import jtps.jTPS_Transaction;
 import map.data.MapData;
@@ -13,25 +14,30 @@ import map.data.MapData;
  *
  * @author nafi
  */
-public class AddNode_Transaction implements jTPS_Transaction {
-    private MapData data;
-    private Node node;
+public class RemoveNode_Transaction implements jTPS_Transaction{
     
-    public AddNode_Transaction(MapData initData, Node initNode) {
-        data = initData;
-        node = initNode;
+    MapData data;
+    Node node;
+
+    public RemoveNode_Transaction(Node node, AppTemplate app) {
+        this.node = node;
+        data = (MapData)app.getDataComponent();
     }
 
+    
+    
+    
     @Override
     public void doTransaction() {
-        //data.getShapes().add(node);
-        data.addNode(node);
         
-        
+        data.removeNodeTransact(node);
     }
 
     @Override
     public void undoTransaction() {
-        data.removeNode(node);
+        
+        data.addNodeTransact(node);
     }
+    
+    
 }

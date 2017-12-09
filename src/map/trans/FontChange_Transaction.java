@@ -5,38 +5,39 @@
  */
 package map.trans;
 
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import jtps.jTPS_Transaction;
-import map.data.MapData;
-import map.data.Station;
 
 /**
  *
  * @author nafi
  */
-public class AddStation_Transaction implements jTPS_Transaction{
+public class FontChange_Transaction implements jTPS_Transaction{
 
-    MapData data;
-    Station node;
+    Text txt;
+    Font oldFont;
+    Font newFont;
 
-    public AddStation_Transaction(MapData data, Station node) {
-        this.data = data;
-        this.node = node;
+    public FontChange_Transaction(Text txt, Font oldFont, Font newFont) {
+        this.txt = txt;
+        this.oldFont = oldFont;
+        this.newFont = newFont;
     }
-    
-    
     
     
     
     
     @Override
     public void doTransaction() {
-        data.addStation(node);
+        
+        txt.setFont(newFont);
     }
 
     @Override
     public void undoTransaction() {
         
-        data.removeStation(node);
+        txt.setFont(oldFont);
     }
     
 }

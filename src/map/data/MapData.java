@@ -28,7 +28,9 @@ import static map.data.MapState.dragging_shape;
 import static map.data.MapState.selecting_shape;
 import static map.data.MapState.sizing_line;
 import static map.data.MapState.sizing_shape;
-import map.trans.AddLine_Transaction;
+
+import map.trans.AddNode_Transaction;
+import map.trans.AddStationToLine_Transaction;
 import map.trans.History;
 
 /**
@@ -39,35 +41,31 @@ import map.trans.History;
  * @version 1.0
  */
 public class MapData implements AppDataComponent {
-    
+
     //Shapes in the map
     ObservableList<Node> shapes;
     //ObservableList<TrainLine> trainlines;
     //ObservableList<Station> stations;
-    
-    
-    HashMap<String,TrainLine> lines;
-    HashMap<String,Station> station;
-    
-    
+
+    HashMap<String, TrainLine> lines;
+    HashMap<String, Station> station;
+
     //Background color
     Color backgroundColor;
-    
+
     Node newShape;
-    
+
     Node selectedShape;
-    
-    Color currentFill, currentOutline; 
+
+    Color currentFill, currentOutline;
     double currentBorderWidth;
-    
+
     MapState state;
-    
+
     AppTemplate app;
     History hist;
-    
-    
+
     Effect highlighted;
-    
 
     public static final String WHITE_HEX = "#FFFFFF";
     public static final String BLACK_HEX = "#000000";
@@ -83,24 +81,24 @@ public class MapData implements AppDataComponent {
      * @param initApp The application within which this data manager is serving.
      */
     public MapData(AppTemplate initApp) {
-	// KEEP THE APP FOR LATER
-	app = initApp;
+        // KEEP THE APP FOR LATER
+        app = initApp;
         hist = History.init();
-	newShape = null;
+        newShape = null;
         selectedShape = null;
         currentFill = Color.web(WHITE_HEX);
         currentBorderWidth = 1;
         this.lines = new HashMap();
         this.station = new HashMap();
         DropShadow dropShadowEffect = new DropShadow();
-	dropShadowEffect.setOffsetX(0.0f);
-	dropShadowEffect.setOffsetY(0.0f);
-	dropShadowEffect.setSpread(1.0);
-	dropShadowEffect.setColor(Color.YELLOW);
-	dropShadowEffect.setBlurType(BlurType.GAUSSIAN);
-	dropShadowEffect.setRadius(15);
-	highlighted = dropShadowEffect;
-	
+        dropShadowEffect.setOffsetX(0.0f);
+        dropShadowEffect.setOffsetY(0.0f);
+        dropShadowEffect.setSpread(1.0);
+        dropShadowEffect.setColor(Color.YELLOW);
+        dropShadowEffect.setBlurType(BlurType.GAUSSIAN);
+        dropShadowEffect.setRadius(15);
+        highlighted = dropShadowEffect;
+
     }
 
     public ObservableList<Node> getShapes() {
@@ -116,10 +114,10 @@ public class MapData implements AppDataComponent {
     }
 
     public void setBackgroundColor(Color backgroundColor) {
-        
+
         this.backgroundColor = backgroundColor;
-        MapWorkspace workspace  = (MapWorkspace)app.getWorkspaceComponent();
-        BackgroundFill fill = new BackgroundFill(backgroundColor,null,null);
+        MapWorkspace workspace = (MapWorkspace) app.getWorkspaceComponent();
+        BackgroundFill fill = new BackgroundFill(backgroundColor, null, null);
         Background background = new Background(fill);
         workspace.getCanvas().setBackground(background);
     }
@@ -146,9 +144,9 @@ public class MapData implements AppDataComponent {
 
     public void setCurrentFill(Color currentFill) {
         this.currentFill = currentFill;
-        if(selectedShape !=null){
-        
-          //  selectedShape.setFill(currentFill);
+        if (selectedShape != null) {
+
+            //  selectedShape.setFill(currentFill);
         }
     }
 
@@ -191,276 +189,226 @@ public class MapData implements AppDataComponent {
     public void setHighlighted(Effect highlighted) {
         this.highlighted = highlighted;
     }
-    
-    
-    
-    
-    
-    
-    
-    
 
     @Override
     public void resetData() {
-        
+
         state = selecting_shape;
         newShape = null;
         selectedShape = null;
-        
+
         this.currentFill = Color.web(WHITE_HEX);
         this.currentOutline = Color.web(BLACK_HEX);
-        
+
         shapes.clear();
-        ((MapWorkspace)app.getWorkspaceComponent()).getCanvas().getChildren().clear();
+        ((MapWorkspace) app.getWorkspaceComponent()).getCanvas().getChildren().clear();
     }
-    
-    public void startNewLine(int x, int y){
-    
-        MapWorkspace workspace = (MapWorkspace)app.getWorkspaceComponent();
-        
-        String lineName = (String)workspace.getLineList().getSelectionModel().getSelectedItem();
+
+    public void startNewLine(int x, int y) {
+
+        MapWorkspace workspace = (MapWorkspace) app.getWorkspaceComponent();
+
+        String lineName = (String) workspace.getLineList().getSelectionModel().getSelectedItem();
         TrainLine newLine = new TrainLine(lineName, false);
-        this.lines.put(lineName, newLine);
-       // newLine.setThicknessslider(workspace.getLineThickness());
+        //this.lines.put(lineName, newLine);
+        // newLine.setThicknessslider(workspace.getLineThickness());
         newLine.start(x, y);
         newShape = newLine;
-        
+
         //shapes.addAll(newLine.startText,newLine,newLine.endText);
         jTPS tps = History.getTps();
-        MapData data = (MapData)app.getDataComponent();
-        AddLine_Transaction newTransaction = new AddLine_Transaction(data, newLine);
+        MapData data = (MapData) app.getDataComponent();
+        AddNode_Transaction newTransaction = new AddNode_Transaction(data, newLine);
         tps.addTransaction(newTransaction);
-        
-         if(selectedShape != null){
-        
+
+        if (selectedShape != null) {
+
             unhighlightShape(selectedShape);
             selectedShape = null;
         }
-         
-         selectedShape = newShape;
-        
-       // newShape.setFill(workspace.getLineColor().getValue());
+
+        selectedShape = newShape;
+
+        // newShape.setFill(workspace.getLineColor().getValue());
         newLine.setStroke(workspace.getLineColor().getValue());
         newLine.setStrokeWidth(workspace.getLineThickness().getValue());
-        
+
         state = sizing_line;
     }
 
-    
-    public void startNewStation(int x, int y, Text name){
-    
-        Station newStation  = new Station(name);
+    public void startNewStation(int x, int y, Text name) {
+
+        Station newStation = new Station(name);
         newShape = newStation;
         newStation.start(x, y);
-        
-        
-        MapWorkspace workspace = (MapWorkspace)app.getWorkspaceComponent();
+
+        MapWorkspace workspace = (MapWorkspace) app.getWorkspaceComponent();
         newStation.setFill(workspace.getStationFillColor().getValue());
         newStation.setStroke(workspace.getStationFillColor().getValue());
-       // newStation.setRadius(workspace.getStopThickness().getValue());
+        // newStation.setRadius(workspace.getStopThickness().getValue());
         newStation.setRadiusX(workspace.getStopThickness().getValue());
         newStation.setRadiusY(workspace.getStopThickness().getValue());
-        
-        newStation.setOnMouseDragged(e->{
-        
-            newStation.drag((int)e.getX(), (int)e.getY());
+
+        newStation.setOnMouseDragged(e -> {
+
+            newStation.drag((int) e.getX(), (int) e.getY());
         });
+
+        //station.put(newStation.name.getText(), newStation);
         
-        station.put(newStation.name.getText(), newStation);
-        shapes.add(newStation);
-        shapes.add(newStation.name);
+        jTPS tps = History.getTps();
+        MapData data = (MapData)app.getDataComponent();
+        AddNode_Transaction newTransaction = new AddNode_Transaction(data, newStation);
+        tps.addTransaction(newTransaction);
         workspace.getStationList().getItems().add(newStation.name.getText());
         workspace.getStationList().getSelectionModel().selectLast();
     }
-    
-    
-    
+
     private void unhighlightShape(Node shape) {
-        
-        
-        
+
         shape.setEffect(null);
     }
+
     
-    public void selectShape(int x, int y){
-    
-        if(selectedShape != null){
-                
-                    selectedShape.setEffect(null);
-                    selectedShape = null;
-                    
-                }
-                
-        
-        /*
-        for(int i= shapes.size()-1; i>=0; i--){
-        
-            if((shapes.get(i)).contains(x,y)){
-            
-                
-                this.selectedShape = shapes.get(i);
-                selectedShape.setEffect(this.highlighted);
-                if(selectedShape instanceof TrainLine){
-                
-                   // lineSetting();
-                }
-            }
-        }
-        */
-    }
-    
-    
-    public Node selectTopNode(int x, int y){
-    
-        Node node = getTopNode(x,y);
-        
-        if(node == null){
-        
-            if(selectedShape != null){
-            
+
+    public Node selectTopNode(int x, int y) {
+
+        Node node = getTopNode(x, y);
+
+        if (node == null) {
+
+            if (selectedShape != null) {
+
                 this.unhighlight(selectedShape);
                 selectedShape = null;
             }
             return node;
         }
-        
-        if(node == selectedShape){
-        
+
+        if (node == selectedShape) {
+
             return node;
         }
-        
-        if(selectedShape != null){
-        
+
+        if (selectedShape != null) {
+
             unhighlight(node);
         }
-        
-        
-        if(node instanceof TrainLine){
-        
-            TrainLine temp = (TrainLine)node;
-            
+
+        if (node instanceof TrainLine) {
+
+            TrainLine temp = (TrainLine) node;
+
             lineSettings(temp);
-        }else if(node instanceof Station){
-        
-            Station temp = (Station)node;
+        } else if (node instanceof Station) {
+
+            Station temp = (Station) node;
             stationSettings(temp);
-        }else if(node instanceof LabelNote){
-        
-            LabelNote temp = (LabelNote)node;
-            
+        } else if (node instanceof LabelNote) {
+
+            LabelNote temp = (LabelNote) node;
+
         }
         selectedShape = node;
         node.setEffect(highlighted);
         return node;
     }
-    
-    public Node getTopNode(int x, int y){
-    
-        for(int i= shapes.size()-1; i>=0; i--){
-        
-            if((shapes.get(i)).contains(x,y)){
-            
-                
+
+    public Node getTopNode(int x, int y) {
+
+        for (int i = shapes.size() - 1; i >= 0; i--) {
+
+            if ((shapes.get(i)).contains(x, y)) {
+
                 return shapes.get(i);
-                
+
             }
         }
-        
+
         return null;
     }
-    
-    
-    
-    boolean isCurrentState(MapState state){
-    
+
+    boolean isCurrentState(MapState state) {
+
         return this.state == state;
     }
 
     public void removeSelection() {
-        if(selectedShape != null){
-        
-            if(selectedShape instanceof TrainLine){
-            
-                TrainLine temp = (TrainLine)selectedShape; 
+        if (selectedShape != null) {
+
+            if (selectedShape instanceof TrainLine) {
+
+                TrainLine temp = (TrainLine) selectedShape;
                 shapes.remove(temp.startText);
                 shapes.remove(temp.endText);
                 // have to remove station from line from line
-            }else if(selectedShape instanceof Station){
-            
-                Station temp = (Station)selectedShape; 
+            } else if (selectedShape instanceof Station) {
+
+                Station temp = (Station) selectedShape;
                 shapes.remove(temp.name);
-               //have to do removeStation from line
-               
-                
-            }else{
-                MapElement el = (MapElement)selectedShape;
+                //have to do removeStation from line
+
+            } else {
+                MapElement el = (MapElement) selectedShape;
                 shapes.remove(selectedShape);
                 //selectedShape = null;
             }
-            
+
         }
     }
-    
-    
-    public void removeElement(int x, int y){
-    
-        Node topGetter = getTopNode(x,y);
-        
-        if(topGetter != null){
-        
-            
+
+    public void removeElement(int x, int y) {
+
+        Node topGetter = getTopNode(x, y);
+
+        if (topGetter != null) {
+
             shapes.remove(topGetter);
         }
-        
+
         state = dragging_shape;
     }
-    
-    
-    public void removeLine(String name){
-    
+
+    public void removeLine(String name) {
+
         TrainLine line = lines.get(name);
-        if(line != null){
-        
-            MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
+        if (line != null) {
+
+            MapWorkspace space = (MapWorkspace) app.getWorkspaceComponent();
             space.getLineList().getItems().remove(name);
-            shapes.removeAll(line.getStartText(),line.getEndText(),line);
+            shapes.removeAll(line.getStartText(), line.getEndText(), line);
             lines.remove(name);
         }
     }
-    
-    
-    public void removeElement(String element){
-    
-        if(state == deleting_line){
-        
-            TrainLine line = (TrainLine)lines.get(element);
-            shapes.removeAll(line,line.startText,line.endText);
-            
+
+    public void removeElement(String element) {
+
+        if (state == deleting_line) {
+
+            TrainLine line = (TrainLine) lines.get(element);
+            shapes.removeAll(line, line.startText, line.endText);
+
             Set<String> k = line.stops.keySet();
             Iterator it = k.iterator();
-            while(it.hasNext()){
+            while (it.hasNext()) {
                 line.stops.get(it.next()).lines.remove(element);
             }
-            
-            
-            MapWorkspace workspace = (MapWorkspace)app.getWorkspaceComponent();
+
+            MapWorkspace workspace = (MapWorkspace) app.getWorkspaceComponent();
             workspace.getLineList().getItems().remove(element);
             System.out.println("Line Removed Successfully");
-            
-        }else if(state == deleting_station){
-        
-         Station temp = (Station)this.station.get(element);
-         Set<String> k = temp.lines.keySet();
-         Iterator it = k.iterator();
-            while(it.hasNext()){
+
+        } else if (state == deleting_station) {
+
+            Station temp = (Station) this.station.get(element);
+            Set<String> k = temp.lines.keySet();
+            Iterator it = k.iterator();
+            while (it.hasNext()) {
                 temp.lines.get(it.next()).stops.remove(element);
             }
-            
+
         }
-    } 
-   
-    
-    
+    }
 
     public void deleteLine(int x, int y) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -471,21 +419,21 @@ public class MapData implements AppDataComponent {
     }
 
     private void lineSettings(TrainLine temp) {
-        
-        MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
+
+        MapWorkspace space = (MapWorkspace) app.getWorkspaceComponent();
         space.getLineList().getSelectionModel().select(temp.getName());
         space.getLineThickness().setValue(temp.getStrokeWidth());
         //space.setLineThickness(temp.getThicknessSlider());
         //temp.getLabeledLine().setEffect(highlighted);
-        
+
     }
 
     private void stationSettings(Station temp) {
-        
-        MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
+
+        MapWorkspace space = (MapWorkspace) app.getWorkspaceComponent();
         space.getStationList().getSelectionModel().select(temp.getName().getText());
         space.getStopThickness().setValue(temp.getRadiusX());
-        space.getStationFillColor().setValue((Color)temp.getFill());
+        space.getStationFillColor().setValue((Color) temp.getFill());
         //temp.setEffect(highlighted);
     }
 
@@ -498,59 +446,158 @@ public class MapData implements AppDataComponent {
     }
 
     private void unhighlight(Node node) {
-        
+
         node.setEffect(null);
     }
 
     public void selectLine(String lineName) {
-        
+
         Node node = lines.get(lineName);
-        
-        if(shapes.contains(node)){
-        
+
+        if (shapes.contains(node)) {
+
             unhighlight(selectedShape);
             selectedShape = node;
             //selectedShape.setEffect(highlighted);
-            MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
+            MapWorkspace space = (MapWorkspace) app.getWorkspaceComponent();
             this.lineSettings(lines.get(lineName));
             System.out.println("entered");
         }
     }
 
     public void processAddStationToLine(int x, int y) {
-        
+
         Node node = this.getTopNode(x, y);
-        
-        if(node instanceof Station){
-        
-            MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
-            Station state = (Station)node;
-            TrainLine line = (TrainLine)lines.get((String)space.getLineList().getValue());
-            line.addStop(state.name.getText(), state);
-            state.addLine(line.getName(), line);
+
+        if (node instanceof Station) {
+
+            MapWorkspace space = (MapWorkspace) app.getWorkspaceComponent();
+            Station state = (Station) node;
+            TrainLine line = (TrainLine) lines.get((String) space.getLineList().getValue());
+            
+            jTPS tps = History.getTps();
+            MapData data = (MapData)app.getDataComponent();
+            AddStationToLine_Transaction newTransaction = new AddStationToLine_Transaction(state,line,app);
+            tps.addTransaction(newTransaction);
+            
+            //line.addStop(state.name.getText(), state);
+            //state.addLine(line.getName(), line);
+        } else {
+
+            state = selecting_shape;
         }
     }
 
     public void processRemoveStationFromLine(int x, int y) {
-        
-        MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
+
+        MapWorkspace space = (MapWorkspace) app.getWorkspaceComponent();
         TrainLine line = this.lines.get(space.getLineList().getValue());
-        line.removeStationFromLine(x,y);
+        line.removeStationFromLine(x, y);
+        
     }
 
     public boolean isTextSelected() {
-        
-        return (selectedShape instanceof Text) || (selectedShape instanceof LabelNote) ;
+
+        return (selectedShape instanceof Text) || (selectedShape instanceof LabelNote);
     }
 
     public void addStation(Station node) {
-        
-        
+
     }
 
     public void removeStation(Station node) {
+        
+        String name = node.getName().getText();
+        if(this.station.containsKey(name)){
+        
+            MapWorkspace space = (MapWorkspace) app.getWorkspaceComponent();
+            space.getStationList().getItems().remove(name);
+            shapes.removeAll(node.name,node);
+            this.station.remove(node);
+        }
+    }
+
+    //ADD Action Command, only adding no coplex adding
+    public void addNode(Node node) {
+
+        int currentIndex = shapes.indexOf(node);
+        if (currentIndex < 0) {
+
+            if (node instanceof TrainLine) {
+
+                TrainLine temp = (TrainLine) node;
+                this.lines.put(temp.name, temp);
+                shapes.addAll(temp.getStartText(), temp.getEndText());
+                MapWorkspace space = (MapWorkspace) app.getWorkspaceComponent();
+                //space.getLineList().getItems().add(temp.getN)
+                
+            } else if (node instanceof Station) {
+
+                Station temp = (Station) node;
+                this.station.put(temp.name.getText(), temp);
+                shapes.add(temp.getName());
+                
+            }
+
+            shapes.add(node);
+        }
+    }
+
+    public void removeNode(Node node) {
+
+        int currentIndex = shapes.indexOf(node);
+        if (currentIndex >= 0) {
+            if (node instanceof TrainLine) {
+
+                TrainLine temp = (TrainLine) node;
+                //needs to remove stations before the actula disappearance
+                //shapes.removeAll(temp.getStartText(), temp.getEndText());
+                removeLine(temp.getName());
+                return;
+            } else if (node instanceof Station) {
+
+                Station temp = (Station) node;
+                //gotta romove the lines first
+                this.removeStation(temp);
+                return;
+            }
+            shapes.remove(node);
+        }
+    }
+
+    //For removal of Elements transaction
+    public void removeNodeTransact(Node node) {
+        
+        if(node instanceof TrainLine){
+        
+            TrainLine temp = (TrainLine)node;
+            
+            
+        }else if (node instanceof Station){
+        
+        }else{
+        
+            
+        }
+    }
+
+    public void addNodeTransact(Node node) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    
+
+    public TrainLine loadNewLine(String string) {
+        
+        MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
+        space.getLineList().getItems().add(string);
+        space.getLineList().getSelectionModel().selectLast();
+        TrainLine temp = new TrainLine((String)space.getLineList().getValue(),false);
+        temp.setStroke(Color.BLACK);
+        temp.setStrokeWidth(space.getLineThickness().getValue());
+        temp.start(300, 300);
+        temp.size(300, 600);
+        this.lines.put(string, temp);
+        return temp;
+        
+    }
+
 }

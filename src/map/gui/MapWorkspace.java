@@ -42,6 +42,7 @@ import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -50,6 +51,7 @@ import static map.css.MapStyle.*;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
@@ -152,6 +154,9 @@ public class MapWorkspace extends AppWorkspaceComponent {
     Button paneUp;
     Button paneDown;
 
+    
+    
+    Button export;
     // THIS IS WHERE WE'LL RENDER OUR DRAWING, NOTE THAT WE
     // CALL THIS A CANVAS, BUT IT'S REALLY JUST A Pane
     Pane canvas;
@@ -159,6 +164,8 @@ public class MapWorkspace extends AppWorkspaceComponent {
 
     Scene temp;
 
+    
+    
     //All Controllers
     LineController lineControl;
     canvasController canvasControl;
@@ -166,7 +173,7 @@ public class MapWorkspace extends AppWorkspaceComponent {
     DecorController decorControl;
     FontController fontControl;
     UndoController trans;
-
+    MapWorkspaceController wsControl;
     // HERE ARE THE CONTROLLERS
     // HERE ARE OUR DIALOGS
     AppMessageDialogSingleton messageDialog;
@@ -328,8 +335,15 @@ public class MapWorkspace extends AppWorkspaceComponent {
         //gui.getTopToolbarPane().setAlignment(Pos.CENTER);
         //Undo Teoolbar
         undoRedo = new FlowPane();
+         export = new Button("exp");
+         export.setTooltip(new Tooltip("Export"));
+         gui.getFileToolbar().getChildren().add(export);
+         
+         
+         
         undo = gui.initChildButton(undoRedo, UNDO_ICON.toString(), UNDO_TOOLTIP.toString(), false);
         redo = gui.initChildButton(undoRedo, REDO_ICON.toString(), REDO_TOOLTIP.toString(), false);
+        //undoRedo.getChildren().add(export);
         undoRedo.resize(10, 20);
         gui.getTopToolbarPane().getChildren().add(undoRedo);
 
@@ -341,6 +355,9 @@ public class MapWorkspace extends AppWorkspaceComponent {
         // THIS WILL GO IN THE LEFT SIDE OF THE WORKSPACE
         editToolbar = new VBox();
 
+       
+        
+        
         //LinePane
         lineToolPane = new VBox();
         lineLabel = new Label("Metro Lines");
@@ -463,17 +480,25 @@ public class MapWorkspace extends AppWorkspaceComponent {
         debugText.setX(100);
         debugText.setY(100);
 
-        // canvasScroll = new ScrollPane();
+        canvasScroll = new ScrollPane();
         MapData data = (MapData) app.getDataComponent();
         data.setShapes(canvas.getChildren());
-        // canvasScroll.setContent(canvas);
-
+        canvasScroll.setContent(canvas);
+        
         // AND MAKE SURE THE DATA MANAGER IS IN SYNCH WITH THE PANE
         // AND NOW SETUP THE WORKSPACE
         workspace = new BorderPane();
         ((BorderPane) workspace).setLeft(editToolbar);
-        ((BorderPane) workspace).setCenter(canvas);
-
+        ((BorderPane) workspace).setCenter(canvasScroll);
+        
+        Group grp = new Group();
+        grp.getChildren().addAll(canvas);
+        grp.getChildren().addAll(canvas.getChildren());
+        
+        canvasScroll.fitToWidthProperty().set(true);
+        canvasScroll.fitToHeightProperty().set(true);
+        canvasScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        canvasScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         //gui.getFileController().handleNewRequest();
     }
 
@@ -485,6 +510,7 @@ public class MapWorkspace extends AppWorkspaceComponent {
         decorControl = new DecorController(app);
         fontControl = new FontController(app);
         trans = new UndoController(app);
+        wsControl = new MapWorkspaceController(app);
         //Listeners for Line toolbar
         addLine.setOnAction(e -> {
 
@@ -521,12 +547,12 @@ public class MapWorkspace extends AppWorkspaceComponent {
 
             lineControl.processLineSelection();
         });
-        this.lineThickness.valueProperty().addListener(new ChangeListener() {
-            @Override
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                lineControl.processStrokeChangeRequest();
-            }
+        this.lineThickness.setOnMouseReleased(e->{
+        
+            lineControl.processStrokeChangeRequest();
         });
+        
+        
 
         //Listeners for Station Toolbar
         addStop.setOnAction(e -> {
@@ -555,12 +581,10 @@ public class MapWorkspace extends AppWorkspaceComponent {
 
         });
 
-        this.stopThickness.valueProperty().addListener(new ChangeListener() {
-            @Override
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                stationControl.processChangeRadius();
-            }
-        });
+        this.stopThickness.setOnMouseReleased(e-> {
+            
+            stationControl.processChangeRadius();
+            });
 
         canvas.setOnMouseClicked(e -> {
 
@@ -575,6 +599,20 @@ public class MapWorkspace extends AppWorkspaceComponent {
         canvas.setOnMouseReleased(e -> {
 
             canvasControl.mouseRelease((int) e.getX(), (int) e.getY());
+        });
+        
+        canvasScroll.setOnKeyPressed(e->{
+        
+            if(e.getCode() == KeyCode.A){
+            
+                canvasScroll.setHvalue(canvasScroll.getHvalue()-0.1);
+            }else if(e.getCode() == KeyCode.D){
+                canvasScroll.setHvalue(canvasScroll.getHvalue()+0.1);
+            }else if(e.getCode() == KeyCode.W){
+                canvasScroll.setVvalue(canvasScroll.getVvalue()+0.1);
+            }else if(e.getCode() == KeyCode.S){
+                canvasScroll.setVvalue(canvasScroll.getVvalue()-0.1);
+            }
         });
 
         //Decor toolbar listeners
@@ -628,6 +666,35 @@ public class MapWorkspace extends AppWorkspaceComponent {
         });
         
 
+        //Workspace listeners
+        this.paneUp.setOnAction(e->{
+        
+            wsControl.shrink();
+        });
+        
+        this.paneDown.setOnAction(e->{
+        
+            wsControl.blow();
+        });
+       this.zoomIn.setOnAction(e->{
+       
+           wsControl.zoomIn();
+           
+       });
+       
+       this.zoomOut.setOnAction(e->{
+       
+           wsControl.zoomOut();
+           
+       });
+       
+       
+       export.setOnAction(e->{
+       
+           wsControl.processSnapshot();
+       });
+        
+        
         //Grid toggle
         this.grid.setOnAction(e -> {
 
@@ -762,6 +829,9 @@ public class MapWorkspace extends AppWorkspaceComponent {
         editToolbar.getStyleClass().add(CLASS_EDIT_TOOLBAR);
 
         // canvas style
+        canvas.getStyleClass().add(CLASS_MAX_PANE);
+        
+        
         //Line tool style
         lineToolPane.getStyleClass().add(CLASS_EDIT_TOOLBAR_ROW);
         linePane1.getStyleClass().add(ROW_ITEM);
@@ -805,6 +875,7 @@ public class MapWorkspace extends AppWorkspaceComponent {
         addImage.getStyleClass().add(BIG_BUTTON);
         imageBack.getStyleClass().add(BIG_BUTTON);
         addLabel.getStyleClass().add(BIG_BUTTON);
+        export.getStyleClass().add(BIG_BUTTON);
         removeElement.getStyleClass().add(BIG_BUTTON);
         decorLabel.getStyleClass().add(SEC_LABEL);
         backgroundColor.getStyleClass().add(CLASS_COLOR_CHOOSER_CONTROL);

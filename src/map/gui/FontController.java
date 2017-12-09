@@ -6,9 +6,14 @@
 package map.gui;
 
 import djf.AppTemplate;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import jtps.jTPS;
 import map.data.MapData;
+import map.trans.FontChange_Transaction;
+import map.trans.FontColor_Transaction;
+import map.trans.History;
 
 /**
  *
@@ -32,7 +37,14 @@ public class FontController {
         if (data.isTextSelected()) {
             Text selectedText = (Text)data.getSelectedShape();
             MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
-            selectedText.setFill(space.getFontColor().getValue());
+            
+            jTPS tps = History.getTps();
+//MapData data = (MapData)app.getDataComponent();
+FontColor_Transaction newTransaction = new FontColor_Transaction(selectedText,(Color)selectedText.getFill(), space.getFontColor().getValue());
+tps.addTransaction(newTransaction);
+            
+            
+           // selectedText.setFill(space.getFontColor().getValue());
         }
         
         
@@ -44,7 +56,14 @@ public class FontController {
             Text selectedText = (Text)data.getSelectedShape();
             MapWorkspace workspace = (MapWorkspace)app.getWorkspaceComponent();
             Font currentFont = workspace.fontSettings();
-            selectedText.setFont(currentFont);
+            
+            jTPS tps = History.getTps();
+//MapData data = (MapData)app.getDataComponent();
+FontChange_Transaction newTransaction = new FontChange_Transaction(selectedText, selectedText.getFont(), currentFont);
+tps.addTransaction(newTransaction);
+            
+            
+          //  selectedText.setFont(currentFont);
         }
     }
     
