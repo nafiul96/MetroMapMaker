@@ -42,6 +42,14 @@ public class StationController {
     void processRemoveStation(){
     
         data.setState(MapState.remove_station);
+        
+        MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
+       String station = (String)space.getStationList().getSelectionModel().getSelectedItem();
+       System.out.println(station);
+       Station temp = data.getStation().get(station);
+       if(temp!=null){
+        data.removeStation(temp);
+       }
     }
     
     void processMoveLabel(){

@@ -153,9 +153,9 @@ public class LineController {
             if(!txt.getText().isEmpty()){
             
                 jTPS tps = History.getTps();
-MapData data = (MapData)app.getDataComponent();
-LineEdit_Transaction newTransaction = new LineEdit_Transaction(app,line,line.getName(), (Color) line.getStroke(),txt.getText(),picker.getValue());
-tps.addTransaction(newTransaction);
+                MapData data = (MapData)app.getDataComponent();
+                LineEdit_Transaction newTransaction = new LineEdit_Transaction(app,line,line.getName(), (Color) line.getStroke(),txt.getText(),picker.getValue());
+                tps.addTransaction(newTransaction);
                 dial.close();
             }
         });
@@ -177,9 +177,11 @@ tps.addTransaction(newTransaction);
     
     void processRemoveLine(){
     
-        data.setState(MapState.deleting_line);
+        //data.setState(MapState.deleting_line);
        MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
-        data.removeElement((String)space.getLineList().getValue());
+       String line = (String)space.getLineList().getSelectionModel().getSelectedItem();
+       System.out.println(line);
+        data.removeLine(line);
         
     }
     
@@ -211,13 +213,7 @@ tps.addTransaction(newTransaction);
         Iterator  it = k.iterator();
         LinkedList<String> s = new LinkedList();
         while(it.hasNext()){
-        /*
-            String t = (String)it.next();
-            if(line.getStops().get(t) != null){
-            
-                s.addLast(t);
-            }
-*/          
+           // String lineName = (String)it.next();
             s.add(line.getStops().get(it.next()).getName().getText());
         }
         v.getItems().setAll(s);
@@ -230,9 +226,10 @@ tps.addTransaction(newTransaction);
     }
     
     void processLineSelection(){
-    
+        System.out.println("entered");
         MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
         if(!space.getLineList().getItems().isEmpty()){
+            System.out.println((String)space.getLineList().getValue());
         data.selectLine((String)space.getLineList().getValue());
         }
     }

@@ -34,6 +34,8 @@ import static djf.ui.AppGUI.CLASS_BORDERED_PANE;
 import static djf.ui.AppGUI.CLASS_FILE_BUTTON;
 import java.awt.Font;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -44,6 +46,8 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
@@ -262,10 +266,10 @@ public class MapWorkspace extends AppWorkspaceComponent {
             }
         });
 
-        Text txt3 = new Text("New Work");
+        Text txt3 = new Text("Create New Work");
         txt3.setUnderline(true);
-
-        rightPane.getChildren().add(txt3);
+        Text txt4 = new Text("close");
+        rightPane.getChildren().addAll(txt3,txt4);
 
         txt3.setOnMouseClicked(e -> {
 
@@ -277,6 +281,19 @@ public class MapWorkspace extends AppWorkspaceComponent {
 
             }
         });
+        
+        txt4.setOnMouseClicked(e -> {
+
+            if (e.getClickCount() > 0) {
+
+               // gui.getWindow().setTitle("Metro Map Maker -" + txt4.getText());
+                gui.getWindow().setScene(gui.getPrimaryScene());
+               // gui.getFileController().handleNewRequest();
+
+            }
+        });
+        
+        
 
         mainPane.setLeft(leftPane);
         mainPane.setCenter(rightPane);
@@ -511,6 +528,8 @@ public class MapWorkspace extends AppWorkspaceComponent {
         fontControl = new FontController(app);
         trans = new UndoController(app);
         wsControl = new MapWorkspaceController(app);
+        
+        
         //Listeners for Line toolbar
         addLine.setOnAction(e -> {
 
@@ -519,11 +538,6 @@ public class MapWorkspace extends AppWorkspaceComponent {
         removeLine.setOnAction(e -> {
 
             lineControl.processRemoveLine();
-        });
-
-        this.addStation.setOnAction(e -> {
-
-            lineControl.processAddStationToLine();
         });
 
         this.addStation.setOnAction(e -> {
@@ -691,7 +705,11 @@ public class MapWorkspace extends AppWorkspaceComponent {
        
        export.setOnAction(e->{
        
-           wsControl.processSnapshot();
+            try {
+                wsControl.processSnapshot();
+            } catch (IOException ex) {
+                
+            }
        });
         
         
@@ -717,6 +735,18 @@ public class MapWorkspace extends AppWorkspaceComponent {
         this.redo.setOnAction(e->{
         
             trans.processRedoRequest();
+        });
+        
+        
+        about.setOnAction(e->{
+        
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Information Dialog");
+            alert.setHeaderText("Thank you for your curiosity");
+            alert.setContentText("The Metro Map Maker- Debugging Enterprise \n"
+                    + "Using DesktopJavaFramework, PropertiesManager, and jtps Transaction\n"
+                    + "Created By --------");
+            alert.showAndWait();
         });
 
     }

@@ -51,10 +51,7 @@ public class LineEdit_Transaction implements jTPS_Transaction{
 
     @Override
     public void undoTransaction() {
-        MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();
-        
-        
-                
+        MapWorkspace space = (MapWorkspace)app.getWorkspaceComponent();    
         line.setName(oldName);
         line.setStroke(oldColor);
         int k = space.getLineList().getSelectionModel().getSelectedIndex();

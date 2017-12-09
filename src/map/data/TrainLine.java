@@ -99,7 +99,7 @@ public class TrainLine extends Polyline implements MapElement {
         Station temp = null;
         while(it.hasNext()){
         
-            temp = this.stops.get(it.next());
+            temp = this.stops.get((String)it.next());
             if(temp != null && temp.contains(x, y)){
             
                 temp.lines.replace(this.name, this, null);

@@ -5,6 +5,7 @@
  */
 package map.data;
 
+import static com.sun.javafx.geom.Vec2d.distance;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -18,7 +19,7 @@ import static map.data.MapState.starting_station;
  *
  * @author nafi
  */
-public class Station extends Ellipse implements MapElement {
+public class Station extends Ellipse implements MapElement,Comparable<Station>{
 
     double startCenterX;
     double startCenterY;
@@ -198,6 +199,26 @@ public class Station extends Ellipse implements MapElement {
     @Override
     public void setStart(int initX, int initY) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    
+
+    @Override
+    public int compareTo(Station o) {
+        double dist1 = distance(0,0,getCenterX(),getCenterY());
+        double dist2 = distance(0,0,o.getCenterX(),o.getCenterY());
+        
+        if(dist1<dist2){
+        
+            return 1;
+        }else if(dist1> dist2){
+        
+        
+            return -1;
+        }
+        
+        return 0;
+        
     }
 
 }

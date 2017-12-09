@@ -59,7 +59,7 @@ public class canvasController {
             data.setState(selecting_shape);
         }else if(data.getState() == deleting_line){
         
-            data.deleteLine(x,y);
+           // data.deleteLine(x,y); done after the remove element by mouse pointer was removed
         }else if(data.getState() == add_station_mode){
         
             data.processAddStationToLine(x,y);

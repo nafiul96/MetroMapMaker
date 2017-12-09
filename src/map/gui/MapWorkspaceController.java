@@ -10,9 +10,11 @@ import static djf.settings.AppStartupConstants.FILE_PROTOCOL;
 import static djf.settings.AppStartupConstants.PATH_WORK;
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -20,6 +22,7 @@ import javafx.scene.transform.Scale;
 import javax.imageio.ImageIO;
 import jtps.jTPS;
 import map.data.MapData;
+import map.file.MapFiles;
 import map.trans.BlowMap_Transaction;
 import map.trans.History;
 import map.trans.ShrinkMap_Transaction;
@@ -120,12 +123,48 @@ public class MapWorkspaceController {
     }
     
     
-    public void processSnapshot(){
+    
+    
+    
+    
+    
+    ///Export processor
+    
+    String chooseSuitableName(){
+    
+        TextInputDialog dialog = new TextInputDialog("");
+        dialog.setTitle("Export your Map");
+        dialog.setHeaderText("Now give it a Name");
+        dialog.setContentText("Please Enter map name:");
+
+        // Traditional way to get the response value.
+        Optional<String> result = dialog.showAndWait();
+        String s = "";
+        if (result.isPresent()){
+            
+            s = result.get();
+        }
+
+        return s;
+    }
+    
+    private void makeDir(String string) {
+        
+        File file = new File(string);
+        file.mkdir();
+                
+    }
+    public void processSnapshot() throws IOException{
 	MapWorkspace workspace = (MapWorkspace)app.getWorkspaceComponent();
 	Pane canvas = workspace.getCanvas();
 	WritableImage image = canvas.snapshot(new SnapshotParameters(), null);
         //app.getFileComponent().loadData(app.getDataComponent(), );
-	File file = new File("LMapo.png");
+        
+        String mapname = chooseSuitableName();
+        makeDir(PATH_WORK+"/"+mapname);
+	File file = new File(PATH_WORK+"/"+mapname+"/"+mapname+".png");
+        MapFiles comp = (MapFiles)app.getFileComponent();
+        comp.saveData(app.getDataComponent(),PATH_WORK+"/"+mapname+"/"+mapname);
 	try {
             
             
@@ -136,12 +175,7 @@ public class MapWorkspaceController {
 	}
     }
 
-    private void makeDir(String string) {
-        
-        File file = new File(string);
-        file.mkdir();
-                
-    }
+    
     
     
     

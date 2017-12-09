@@ -5,10 +5,23 @@
  */
 package map.gui;
 
+import djf.AppTemplate;
+
 /**
  *
  * @author nafi
  */
 public class WelcomeController {
+    
+    
+    AppTemplate app;
+    
+    public WelcomeController(AppTemplate app){
+    
+        this.app = app;
+    }
+    
+    
+    
     
 }
